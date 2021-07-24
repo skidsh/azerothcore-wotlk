@@ -229,19 +229,19 @@ DB_MYSQL_DUMP_EXEC="mysqldump"
 
 
 DB_AUTH_CONF=${DB_AUTH_CONF:-"MYSQL_USER='acore'; \
-                    MYSQL_PASS='acore'; \
+                    MYSQL_PASS='Homie702$'; \
                     MYSQL_HOST='localhost';\
                     MYSQL_PORT='3306';\
                     "}
 
 DB_CHARACTERS_CONF=${DB_CHARACTERS_CONF:-"MYSQL_USER='acore'; \
-                    MYSQL_PASS='acore'; \
+                    MYSQL_PASS='Homie702$'; \
                     MYSQL_HOST='localhost';\
                     MYSQL_PORT='3306';\
                     "}
 
 DB_WORLD_CONF=${DB_WORLD_CONF:-"MYSQL_USER='acore'; \
-                    MYSQL_PASS='acore'; \
+                    MYSQL_PASS='Homie702$'; \
                     MYSQL_HOST='localhost';\
                     MYSQL_PORT='3306';\
                     "}
