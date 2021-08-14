@@ -431,7 +431,7 @@ public:
     }
 };
 
-/* 32727 - Arena Preparation
+/* 32728 - Arena Preparation
    44521 - Preparation */
 class spell_gen_bg_preparation : public SpellScriptLoader
 {
@@ -462,7 +462,7 @@ public:
         {
             if (Player* player = GetUnitOwner()->GetCharmerOrOwnerPlayerOrPlayerItself())
                 if (MapEntry const* mapEntry = sMapStore.LookupEntry(player->GetMapId()))
-                    if ((GetId() == 32727 && mapEntry->IsBattleArena()) || (GetId() == 44521 && mapEntry->IsBattleground()))
+                    if ((GetId() == 32728 && mapEntry->IsBattleArena()) || (GetId() == 44521 && mapEntry->IsBattleground()))
                         if (Battleground* bg = player->GetBattleground())
                             if (bg->GetStatus() == STATUS_WAIT_JOIN)
                                 return;
