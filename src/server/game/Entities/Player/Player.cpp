@@ -6260,6 +6260,16 @@ void Player::DuelComplete(DuelCompleteType type)
         data << GetName();
         SendMessageToSet(&data, true);
     }
+    
+    Map* map = sMapMgr->FindMap(this->GetMapId(), this->GetInstanceId());
+    if (map) {
+        Map::PlayerList const& players = map->GetPlayers();
+        for (Map::PlayerList::const_iterator iter = players.begin(); iter != players.end(); ++iter)
+        {
+            Player* check = iter->GetSource();
+            check->UpdateObjectVisibility();
+        }
+    }
 
     sScriptMgr->OnPlayerDuelEnd(duel->opponent, this, type);
 

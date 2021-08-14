@@ -393,8 +393,18 @@ void Player::UpdateDuelFlag(time_t currTime)
     if (!duel || duel->startTimer == 0 || currTime < duel->startTimer + 3)
         return;
 
-    sScriptMgr->OnPlayerDuelStart(this, duel->opponent);
+    Map* map = sMapMgr->FindMap(this->GetMapId(), this->GetInstanceId());
+    if (map) {
+        Map::PlayerList const& players = map->GetPlayers();
+        for (Map::PlayerList::const_iterator iter = players.begin(); iter != players.end(); ++iter)
+        {
+            Player* check = iter->GetSource();
+            check->UpdateObjectVisibility();
+        }
+    }
 
+    sScriptMgr->OnPlayerDuelStart(this, duel->opponent);
+    
     SetUInt32Value(PLAYER_DUEL_TEAM, 1);
     duel->opponent->SetUInt32Value(PLAYER_DUEL_TEAM, 2);
 

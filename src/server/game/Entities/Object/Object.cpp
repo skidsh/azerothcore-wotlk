@@ -1628,8 +1628,13 @@ bool WorldObject::CanSeeOrDetect(WorldObject const* obj, bool ignoreStealth, boo
         if (cObj->IsAIEnabled && this->ToPlayer() && !cObj->AI()->CanBeSeen(this->ToPlayer()))
             return false;
 
+    // jax: hide non-opponents while dueling
+    if (this->GetTypeId() == TYPEID_PLAYER && obj->GetTypeId() == TYPEID_PLAYER)
+        if (((const Player*)this)->duel != NULL && ((const Player*)this)->duel->opponent != obj)
+            return false;
+
     // pussywizard: arena spectator
-    if (obj->GetTypeId() == TYPEID_PLAYER)
+    if (obj->GetTypeId() == TYPEID_PLAYER) 
         if (((const Player*)obj)->IsSpectator() && ((const Player*)obj)->FindMap()->IsBattleArena())
             return false;
 
