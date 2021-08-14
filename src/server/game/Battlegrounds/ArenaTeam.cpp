@@ -996,6 +996,10 @@ ArenaTeamMember* ArenaTeam::GetMember(ObjectGuid guid)
 
 uint8 ArenaTeam::GetReqPlayersForType(uint32 type)
 {
+    if (sBattlegroundMgr->isArenaTesting()) {
+        return 2;
+    }
+    
     auto const& itr = ArenaReqPlayersForType.find(type);
     if (itr == ArenaReqPlayersForType.end())
     {
