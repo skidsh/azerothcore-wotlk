@@ -2527,7 +2527,8 @@ public:
     Optional<float> GetFarSightDistance() const;
 
     float GetSightRange(const WorldObject* target = nullptr) const override;
-
+    
+    uint32 GetItemDisplayIdInSlot(uint8 bag, uint8 slot) const;
  protected:
     // Gamemaster whisper whitelist
     WhisperListContainer WhisperList;
