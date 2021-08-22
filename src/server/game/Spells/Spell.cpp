@@ -2202,7 +2202,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
         targetInfo.timeDelay = (uint64) floor(dist / m_spellInfo->Speed * 1000.0f);
 
         // Add the min delay
-        targetInfo.timeDelay += 200;
+        targetInfo.timeDelay += 125;
 
         // Calculate minimum incoming time
         if (m_delayMoment == 0 || m_delayMoment > targetInfo.timeDelay)
@@ -2211,7 +2211,7 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
     else 
     {
         // minimum delay for all instant spells
-        targetInfo.timeDelay = 200;
+        targetInfo.timeDelay = 125;
         if (m_delayMoment == 0 || m_delayMoment > targetInfo.timeDelay)
             m_delayMoment = targetInfo.timeDelay;
     }
