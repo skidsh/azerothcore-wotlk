@@ -1241,7 +1241,7 @@ void Player::ToggleAFK()
     ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK);
 
     // afk player not allowed in battleground
-    if (isAFK() && InBattleground() && !InArena())
+    if (isAFK() && (InBattleground() || InArena()))
         LeaveBattleground();
 }
 
@@ -4542,6 +4542,16 @@ void Player::SpawnCorpseBones(bool triggerSave /*= true*/)
 
             CharacterDatabase.CommitTransaction(trans);
         }
+}
+
+uint32 Player::GetItemDisplayIdInSlot(uint8 bag, uint8 slot) const
+{
+    uint32 mog = GetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * 16));
+
+    if (!mog)
+        return 0;
+
+    return mog;
 }
 
 Corpse* Player::GetCorpse() const
