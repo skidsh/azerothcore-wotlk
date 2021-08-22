@@ -31,8 +31,8 @@
 #define MIN_MYSQL_SERVER_VERSION 100200u
 #define MIN_MYSQL_CLIENT_VERSION 30203u
 #else
-#define MIN_MYSQL_SERVER_VERSION 50700u
-#define MIN_MYSQL_CLIENT_VERSION 50700u
+#define MIN_MYSQL_SERVER_VERSION 50000u
+#define MIN_MYSQL_CLIENT_VERSION 50000u
 #endif
 
 class PingOperation : public SQLOperation
@@ -390,6 +390,8 @@ uint32 DatabaseWorkerPool<T>::OpenConnections(InternalIndex type, uint8 numConne
         }
         else if (connection->GetServerVersion() < MIN_MYSQL_SERVER_VERSION)
         {
+	    std::string msg("Version: " + std::to_string(connection->GetServerVersion()));
+	    LOG_ERROR("sql.driver", msg);
             LOG_ERROR("sql.driver", "AzerothCore does not support MySQL versions below 5.7");
             return 1;
         }
