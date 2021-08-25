@@ -3183,7 +3183,7 @@ void Player::learnSpell(uint32 spellId, bool temporary)
     // Xinef: don't allow to learn active spell once more
     if (HasActiveSpell(spellId))
     {
-        LOG_ERROR("entities.player", "Player (%s) tries to learn already active spell: %u", GetGUID().ToString().c_str(), spellId);
+        LOG_DEBUG("entities.player", "Player (%s) tries to learn already active spell: %u", GetGUID().ToString().c_str(), spellId);
         return;
     }
 
@@ -4546,7 +4546,7 @@ void Player::SpawnCorpseBones(bool triggerSave /*= true*/)
 
 uint32 Player::GetItemDisplayIdInSlot(uint8 bag, uint8 slot) const
 {
-    uint32 mog = GetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * 16));
+    uint32 mog = GetUInt32Value(PLAYER_VISIBLE_ITEM_1_ENTRYID + (slot * 2));
 
     if (!mog)
         return 0;
@@ -12729,7 +12729,7 @@ void Player::_LoadSkills(PreparedQueryResult result)
             SkillRaceClassInfoEntry const* rcEntry = GetSkillRaceClassInfo(skill, getRace(), getClass());
             if (!rcEntry)
             {
-                LOG_ERROR("entities.player", "Character %s has skill %u that does not exist.", GetGUID().ToString().c_str(), skill);
+                LOG_DEBUG("entities.player", "Character %s has skill %u that does not exist.", GetGUID().ToString().c_str(), skill);
                 continue;
             }
 
