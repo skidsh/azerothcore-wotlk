@@ -695,6 +695,7 @@ void World::LoadConfigSettings(bool reload)
 
     /// \todo Add MonsterSight in worldserver.conf or put it as define
     m_float_configs[CONFIG_SIGHT_MONSTER] = sConfigMgr->GetOption<float>("MonsterSight", 50);
+    m_float_configs[CONFIG_SPELL_BATCH_DELAY] = sConfigMgr->GetOption<float>("SpellBatchDelay", 20);
 
     if (reload)
     {
