@@ -864,16 +864,17 @@ void Spell::SelectSpellTargets()
 
     if (m_targets.HasDst())
     {
+        float batchDelay = sWorld->getFloatConfig(CONFIG_SPELL_BATCH_DELAY);
         if (m_targets.HasTraj())
         {
             float speed = m_targets.GetSpeedXY();
             if (speed > 0.0f)
-                m_delayTrajectory = (uint64)floor(m_targets.GetDist2d() / speed * 1000.0f);
+                m_delayTrajectory = (uint64)floor(m_targets.GetDist2d() / speed * 1000.0f) + batchDelay;
         }
         else if (m_spellInfo->Speed > 0.0f)
         {
             float dist = m_caster->GetExactDist(m_targets.GetDstPos());
-            m_delayTrajectory = (uint64) floor(dist / m_spellInfo->Speed * 1000.0f);
+            m_delayTrajectory = (uint64) floor(dist / m_spellInfo->Speed * 1000.0f) + batchDelay;
         }
     }
 }
@@ -2191,27 +2192,27 @@ void Spell::AddUnitTarget(Unit* target, uint32 effectMask, bool checkIfValid /*=
 
     // Spell have speed - need calculate incoming time
     // Incoming time is zero for self casts. At least I think so.
-    if (m_spellInfo->Speed > 0.0f && m_caster != target)
+    float batchDelay = sWorld->getFloatConfig(CONFIG_SPELL_BATCH_DELAY);
+    if (m_spellInfo->Speed > 0.0f)
     {
         // calculate spell incoming interval
         // TODO: this is a hack
         float dist = m_caster->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
-
         if (dist < 5.0f)
             dist = 5.0f;
-        targetInfo.timeDelay = (uint64) floor(dist / m_spellInfo->Speed * 1000.0f);
-
-        // Add the min delay
-        targetInfo.timeDelay += 125;
+        targetInfo.timeDelay = (uint64) floor(dist / m_spellInfo->Speed * 1000.0f) + batchDelay;
 
         // Calculate minimum incoming time
         if (m_delayMoment == 0 || m_delayMoment > targetInfo.timeDelay)
             m_delayMoment = targetInfo.timeDelay;
     }
-    else 
+    else if (m_caster == target) {
+        targetInfo.timeDelay = 0;
+    } 
+    else
     {
         // minimum delay for all instant spells
-        targetInfo.timeDelay = 125;
+        targetInfo.timeDelay = batchDelay;
         if (m_delayMoment == 0 || m_delayMoment > targetInfo.timeDelay)
             m_delayMoment = targetInfo.timeDelay;
     }
@@ -2300,18 +2301,19 @@ void Spell::AddGOTarget(GameObject* go, uint32 effectMask)
     target.processed  = false;                              // Effects not apply on target
 
     // Spell have speed - need calculate incoming time
+    float batchDelay = sWorld->getFloatConfig(CONFIG_SPELL_BATCH_DELAY);
     if (m_spellInfo->Speed > 0.0f)
     {
         // calculate spell incoming interval
         float dist = m_caster->GetDistance(go->GetPositionX(), go->GetPositionY(), go->GetPositionZ());
         if (dist < 5.0f)
             dist = 5.0f;
-        target.timeDelay = uint64(floor(dist / m_spellInfo->Speed * 1000.0f));
+        target.timeDelay = uint64(floor(dist / m_spellInfo->Speed * 1000.0f) + batchDelay);
         if (m_delayMoment == 0 || m_delayMoment > target.timeDelay)
             m_delayMoment = target.timeDelay;
     }
     else
-        target.timeDelay = 0LL;
+        target.timeDelay = batchDelay;
 
     // Add target to list
     m_UniqueGOTargetInfo.push_back(target);
@@ -2715,7 +2717,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
         return SPELL_MISS_EVADE;
 
     // For delayed spells immunity may be applied between missile launch and hit - check immunity for that case
-    if (m_spellInfo->Speed && ((m_damage > 0 && unit->IsImmunedToDamage(m_spellInfo)) || unit->IsImmunedToSchool(m_spellInfo) || unit->IsImmunedToSpell(m_spellInfo)))
+    if ((m_damage > 0 && unit->IsImmunedToDamage(m_spellInfo)) || unit->IsImmunedToSchool(m_spellInfo) || unit->IsImmunedToSpell(m_spellInfo))
         return SPELL_MISS_IMMUNE;
 
     // disable effects to which unit is immune
@@ -2766,24 +2768,21 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
     {
         // Recheck  UNIT_FLAG_NON_ATTACKABLE for delayed spells
         // Xinef: Also check evade state
-        if (m_spellInfo->Speed > 0.0f)
-        {
-            if (unit->GetTypeId() == TYPEID_UNIT && unit->ToCreature()->IsInEvadeMode())
-                return SPELL_MISS_EVADE;
+        if (unit->GetTypeId() == TYPEID_UNIT && unit->ToCreature()->IsInEvadeMode())
+            return SPELL_MISS_EVADE;
 
-            if (unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE) && unit->GetCharmerOrOwnerGUID() != m_caster->GetGUID())
-                return SPELL_MISS_EVADE;
-        }
+        if (unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE) && unit->GetCharmerOrOwnerGUID() != m_caster->GetGUID())
+            return SPELL_MISS_EVADE;
 
         if (m_caster->_IsValidAttackTarget(unit, m_spellInfo) && /*Intervene Trigger*/ m_spellInfo->Id != 59667)
         {
             unit->RemoveAurasWithInterruptFlags(AURA_INTERRUPT_FLAG_HITBYSPELL);
         }
-        else if (m_caster->IsFriendlyTo(unit))
+        else if (m_caster->IsFriendlyTo(unit) || (unit->GetTypeId() == TYPEID_PLAYER && unit->IsInSanctuary() && !unit->ToPlayer()->duel))
         {
             // for delayed spells ignore negative spells (after duel end) for friendly targets
             // TODO: this cause soul transfer bugged
-            if(!IsTriggered() && m_spellInfo->Speed > 0.0f && unit->GetTypeId() == TYPEID_PLAYER && !m_spellInfo->IsPositive())
+            if(!IsTriggered() && unit->GetTypeId() == TYPEID_PLAYER && !m_spellInfo->IsPositive())
                 return SPELL_MISS_EVADE;
 
             // assisting case, healing and resurrection
@@ -7424,7 +7423,7 @@ bool Spell::IsAutoActionResetSpell() const
 
 bool Spell::IsNeedSendToClient(bool go) const
 {
-    return m_spellInfo->SpellVisual[0] || m_spellInfo->SpellVisual[1] || m_spellInfo->IsChanneled() ||
+    return m_spellInfo->SpellVisual[0] || m_spellInfo->SpellVisual[1] || m_spellInfo->IsChanneled() || !m_spellInfo->IsPassive() ||
            m_spellInfo->Speed > 0.0f || (!m_triggeredByAuraSpell && !IsTriggered()) || (go && m_triggeredByAuraSpell && m_triggeredByAuraSpell->IsChanneled());
 }
 
