@@ -59,7 +59,20 @@ void BattlegroundRV::CheckPositionForUnit(Unit* unit)
 void BattlegroundRV::PostUpdateImpl(uint32 diff)
 {
     if (GetStatus() != STATUS_IN_PROGRESS)
+    {
+        for (auto itr = m_Players.begin(); itr != m_Players.end(); ++itr)
+        {
+            if (Player* player = itr->second)
+            {                    
+                if (player->GetPositionZ() < 2) 
+                {
+                    TeleportUnitToNewZ(player, 3, true);
+                }
+            }
+        }
+            
         return;
+    }
 
     if (getTimer() < diff)
     {
@@ -74,6 +87,7 @@ void BattlegroundRV::PostUpdateImpl(uint32 diff)
                 for (auto itr = m_Players.begin(); itr != m_Players.end(); ++itr)
                     if (Player* player = itr->second)
                     {
+                        player->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
                         // Demonic Circle Summon
                         if (GameObject* gObj = player->GetGameObject(48018))
                         {
@@ -151,7 +165,10 @@ void BattlegroundRV::StartingEventCloseDoors()
 void BattlegroundRV::StartingEventOpenDoors()
 {
     for (BattlegroundPlayerMap::iterator itr = m_Players.begin(); itr != m_Players.end(); ++itr)
+    {
         itr->second->SetPhaseMask(1, true);
+        itr->second->SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
+    }        
 
     // Buff respawn
     SpawnBGObject(BG_RV_OBJECT_BUFF_1, 90);
@@ -275,8 +292,8 @@ bool BattlegroundRV::SetupBattleground()
             || !AddObject(BG_RV_OBJECT_PILAR_4, BG_RV_OBJECT_TYPE_PILAR_4, 802.211609f, -284.493256f, 24.648525f, 0.000000f, 0, 0, 0, RESPAWN_IMMEDIATELY)
 
             // Arena Ready Marker
-            || !AddObject(BG_RV_OBJECT_READY_MARKER_1, ARENA_READY_MARKER_ENTRY, 769.93f, -301.04f, 2.80f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 300)
-            || !AddObject(BG_RV_OBJECT_READY_MARKER_2, ARENA_READY_MARKER_ENTRY, 757.02f, -267.30f, 2.80f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 300)
+            || !AddObject(BG_RV_OBJECT_READY_MARKER_1, ARENA_READY_MARKER_ENTRY, 769.831726f, -288.074585f, 2.782228f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 300)
+            || !AddObject(BG_RV_OBJECT_READY_MARKER_2, ARENA_READY_MARKER_ENTRY, 756.897705f, -280.299896f, 2.782174f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 300)
        )
     {
         LOG_ERROR("sql.sql", "BatteGroundRV: Failed to spawn some object!");

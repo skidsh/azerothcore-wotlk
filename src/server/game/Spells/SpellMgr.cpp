@@ -7445,10 +7445,10 @@ void SpellMgr::LoadDbcDataCorrections()
     achievement->mapID = 631;    // Correct map requirement (currently has Ulduar)
 
     // Ring of Valor starting Locations
-    GraveyardStruct const* entry = sGraveyard->GetGraveyard(1364);
-    const_cast<GraveyardStruct*>(entry)->z += 6.0f;
-    entry = sGraveyard->GetGraveyard(1365);
-    const_cast<GraveyardStruct*>(entry)->z += 6.0f;
+    // GraveyardStruct const* entry = sGraveyard->GetGraveyard(1364);
+    // const_cast<GraveyardStruct*>(entry)->z += 6.0f;
+    // entry = sGraveyard->GetGraveyard(1365);
+    // const_cast<GraveyardStruct*>(entry)->z += 6.0f;
 
     LockEntry* key = const_cast<LockEntry*>(sLockStore.LookupEntry(36)); // 3366 Opening, allows to open without proper key
     key->Type[2] = LOCK_KEY_NONE;
