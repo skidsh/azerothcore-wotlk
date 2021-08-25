@@ -1824,6 +1824,7 @@ public:
     void UpdateHeight(float newZ);
 
     void KnockbackFrom(float x, float y, float speedXY, float speedZ);
+    void KnockBackWithAngle(float angle, float horizontalSpeed, float verticalSpeed);
     void JumpTo(float speedXY, float speedZ, bool forward = true);
     void JumpTo(WorldObject* obj, float speedZ);
 

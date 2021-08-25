@@ -10508,13 +10508,14 @@ Unit* Unit::GetMagicHitRedirectTarget(Unit* victim, SpellInfo const* spellInfo)
 
                 if (magnet->IsTotem())
                 {
+                    float batchDelay = sWorld->getFloatConfig(CONFIG_SPELL_BATCH_DELAY);
                     uint64 queueTime = magnet->m_Events.CalculateQueueTime(100);
                     if (spellInfo->Speed > 0.0f)
                     {
                         float dist = GetDistance(magnet->GetPositionX(), magnet->GetPositionY(), magnet->GetPositionZ());
                         if (dist < 5.0f)
                             dist = 5.0f;
-                        queueTime = magnet->m_Events.CalculateTime((uint64)floor(dist / spellInfo->Speed * 1000.0f));
+                        queueTime = magnet->m_Events.CalculateTime((uint64)floor(dist / spellInfo->Speed * 1000.0f) + batchDelay);
                     }
 
                     magnet->m_Events.AddEvent(new KillMagnetEvent(*magnet), queueTime);
@@ -18332,6 +18333,40 @@ void Unit::UpdateObjectVisibility(bool forced, bool /*fromUpdate*/)
         Acore::AIRelocationNotifier notifier(*this);
         float radius = 60.0f;
         Cell::VisitAllObjects(this, notifier, radius);
+    }
+}
+
+void Unit::KnockBackWithAngle(float angle, float horizontalSpeed, float verticalSpeed)
+{
+    Player* player = ToPlayer();
+    if (!player)
+    {
+        if (Unit* charmer = GetCharmer())
+        {
+            player = charmer->ToPlayer();
+            if (player && player->m_mover != this)
+                player = nullptr;
+        }
+    }
+
+    if (player) {
+        float vsin = sin(angle);
+        float vcos = cos(angle);
+
+        WorldPacket data(SMSG_MOVE_KNOCK_BACK, (8 + 4 + 4 + 4 + 4 + 4));
+        data << GetPackGUID();
+        data << uint32(0);                                      // counter
+        data << float(vcos);                                    // x direction
+        data << float(vsin);                                    // y direction
+        data << float(horizontalSpeed);                                 // Horizontal speed
+        data << float(-verticalSpeed);                                 // Z Movement speed (vertical)
+
+        player->GetSession()->SendPacket(&data);
+
+        if (player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) || player->HasAuraType(SPELL_AURA_FLY))
+            player->SetCanFly(true, true);
+
+        sScriptMgr->AnticheatSetSkipOnePacketForASH(player, true);
     }
 }
 

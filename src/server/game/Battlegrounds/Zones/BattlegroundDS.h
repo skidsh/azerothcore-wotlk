@@ -58,7 +58,7 @@ enum BattlegroundDSData
     BG_DS_WATERFALL_TIMER_MIN                    = 30000,
     BG_DS_WATERFALL_TIMER_MAX                    = 60000,
     BG_DS_WATERFALL_WARNING_DURATION             = 5000,
-    BG_DS_WATERFALL_DURATION                     = 30000,
+    BG_DS_WATERFALL_DURATION                     = 20000,
     BG_DS_WATERFALL_KNOCKBACK_TIMER              = 1500,
 
     BG_DS_PIPE_KNOCKBACK_FIRST_DELAY             = 5000,

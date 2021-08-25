@@ -52,6 +52,24 @@ void BattlegroundDS::PostUpdateImpl(uint32 diff)
                 if (Creature* waterSpout = GetBgMap()->GetCreature(BgCreatures[i]))
                     waterSpout->CastSpell(waterSpout, BG_DS_SPELL_FLUSH, true);
 
+            // knockback players manually due to missing players with spell 61698
+            for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+            {
+                Player* plr = itr->second;
+                if (!plr)
+                    continue;
+
+                if (plr->GetPositionZ() < 11.0f)
+                    continue;
+                    
+                // knockback player depending on location
+                if (plr->IsWithinDist2d(1249.43f, 764.601f, 40))
+                    plr->KnockBackWithAngle(0, 55, 7);
+
+                if (plr->IsWithinDist2d(1333.51f, 818.031f, 40))
+                    plr->KnockBackWithAngle(3.10f, 55, 7);
+            }
+
             setPipeKnockBackCount(getPipeKnockBackCount() + 1);
             setPipeKnockBackTimer(BG_DS_PIPE_KNOCKBACK_DELAY);
         }
@@ -235,9 +253,9 @@ bool BattlegroundDS::SetupBattleground()
             // water
             || !AddObject(BG_DS_OBJECT_WATER_1, BG_DS_OBJECT_TYPE_WATER_1, 1291.56f, 790.837f, 7.1f, 3.14238f, 0, 0, 0.694215f, -0.719768f, 120)
             || !AddObject(BG_DS_OBJECT_WATER_2, BG_DS_OBJECT_TYPE_WATER_2, 1291.56f, 790.837f, 7.1f, 3.14238f, 0, 0, 0.694215f, -0.719768f, 120)
-            // buffs
-            || !AddObject(BG_DS_OBJECT_BUFF_1, BG_DS_OBJECT_TYPE_BUFF_1, 1291.7f, 813.424f, 7.11472f, 4.64562f, 0, 0, 0.730314f, -0.683111f, 120)
-            || !AddObject(BG_DS_OBJECT_BUFF_2, BG_DS_OBJECT_TYPE_BUFF_2, 1291.7f, 768.911f, 7.11472f, 1.55194f, 0, 0, 0.700409f, 0.713742f, 120)
+            // buffs            
+            || !AddObject(BG_DS_OBJECT_BUFF_1, BG_DS_OBJECT_TYPE_BUFF_1, 1260.889038f, 820.056824f, 3.160010f, 4.64562f, 0, 0, 0.730314f, -0.683111f, 120)
+            || !AddObject(BG_DS_OBJECT_BUFF_2, BG_DS_OBJECT_TYPE_BUFF_2, 1323.007812f, 761.111450f, 3.160120, 1.55194f, 0, 0, 0.700409f, 0.713742f, 120)
             // knockback creatures
             || !AddCreature(BG_DS_NPC_TYPE_WATER_SPOUT, BG_DS_NPC_WATERFALL_KNOCKBACK, 1291.76f, 791.02f, 7.115f, 3.054326f, RESPAWN_IMMEDIATELY)
             || !AddCreature(BG_DS_NPC_TYPE_WATER_SPOUT, BG_DS_NPC_PIPE_KNOCKBACK_1, 1369.977f, 817.2882f, 16.08718f, 3.106686f, RESPAWN_IMMEDIATELY)
