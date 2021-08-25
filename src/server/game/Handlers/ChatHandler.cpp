@@ -614,31 +614,28 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
             break;
         case CHAT_MSG_AFK:
             {
-                if (!sender->IsInCombat())
+                if (sender->isAFK())                       // Already AFK
                 {
-                    if (sender->isAFK())                       // Already AFK
-                    {
-                        if (msg.empty())
-                            sender->ToggleAFK();               // Remove AFK
-                        else
-                            sender->autoReplyMsg = msg;        // Update message
-                    }
-                    else                                        // New AFK mode
-                    {
-                        sender->autoReplyMsg = msg.empty() ? GetAcoreString(LANG_PLAYER_AFK_DEFAULT) : msg;
+                    if (msg.empty())
+                        sender->ToggleAFK();               // Remove AFK
+                    else
+                        sender->autoReplyMsg = msg;        // Update message
+                }
+                else                                        // New AFK mode
+                {
+                    sender->autoReplyMsg = msg.empty() ? GetAcoreString(LANG_PLAYER_AFK_DEFAULT) : msg;
 
-                        if (sender->isDND())
-                            sender->ToggleDND();
+                    if (sender->isDND())
+                        sender->ToggleDND();
 
-                        sender->ToggleAFK();
-                    }
+                    sender->ToggleAFK();
+                }
 
-                    sScriptMgr->OnPlayerChat(sender, type, lang, msg);
+                sScriptMgr->OnPlayerChat(sender, type, lang, msg);
 #ifdef ELUNA
                     if (!sEluna->OnChat(sender, type, lang, msg))
                         return;
 #endif
-                }
                 break;
             }
         case CHAT_MSG_DND:
