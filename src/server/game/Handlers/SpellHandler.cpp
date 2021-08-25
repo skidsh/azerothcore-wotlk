@@ -20,6 +20,7 @@
 #include "Vehicle.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
+#include "Guild.h"
 
 #ifdef ELUNA
 #include "LuaEngine.h"
@@ -624,16 +625,21 @@ void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
     if (!unit)
         return;
 
+    Unit* creator;
     if (!unit->HasAuraType(SPELL_AURA_CLONE_CASTER))
-        return;
+    {
+        creator = unit->GetCharmerOrOwner();
+    }
+    else {
+        creator = unit->GetAuraEffectsByType(SPELL_AURA_CLONE_CASTER).front()->GetCaster();
+    }
 
     // Get creator of the unit (SPELL_AURA_CLONE_CASTER does not stack)
-    Unit* creator = unit->GetAuraEffectsByType(SPELL_AURA_CLONE_CASTER).front()->GetCaster();
     if (!creator)
         return;
 
     WorldPacket data(SMSG_MIRRORIMAGE_DATA, 68);
-    data << guid;
+    data << uint64(guid.GetRawValue());
     data << uint32(creator->GetDisplayId());
     data << uint8(creator->getRace());
     data << uint8(creator->getGender());
@@ -672,9 +678,11 @@ void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
                 data << uint32(0);
             else if (*itr == EQUIPMENT_SLOT_BACK && player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_CLOAK))
                 data << uint32(0);
-            else if (Item const* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, *itr))
+            else if (uint32 itemId = player->GetItemDisplayIdInSlot(INVENTORY_SLOT_BAG_0, *itr))
             {
-                uint32 displayInfoId = item->GetTemplate()->DisplayInfoID;
+                Item *item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, *itr);
+                ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(itemId);
+                uint32 displayInfoId = pProto->DisplayInfoID;
 
                 sScriptMgr->OnGlobalMirrorImageDisplayItem(item, displayInfoId);
 
@@ -683,6 +691,10 @@ void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
             else
                 data << uint32(0);
         }
+        uint32 itemIdMH = player->GetItemDisplayIdInSlot(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND);
+        unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, itemIdMH);
+        uint32 itemIdOH = player->GetItemDisplayIdInSlot(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
+        unit->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID + 1, itemIdOH);
     }
     else
     {
