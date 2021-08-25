@@ -682,8 +682,45 @@ public:
         void HandleDummy(SpellEffIndex /*effIndex*/)
         {
             Unit* caster = GetCaster();
-            if (Unit* unitTarget = GetHitUnit())
-                caster->CastSpell(unitTarget, SPELL_ROGUE_SHIV_TRIGGERED, true);
+            if (Unit* target = GetHitUnit()) {
+                caster->CastSpell(target, SPELL_ROGUE_SHIV_TRIGGERED, true);
+                Player * player = caster->ToPlayer();
+                Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
+
+                if (!item)
+                    return;
+
+                // item combat enchantments
+                for (uint8 slot = 0; slot < MAX_ENCHANTMENT_SLOT; ++slot)
+                {
+                    SpellItemEnchantmentEntry const* enchant = sSpellItemEnchantmentStore.LookupEntry(item->GetEnchantmentId(EnchantmentSlot(slot)));
+                    if (!enchant)
+                        continue;
+
+                    for (uint8 s = 0; s < 3; ++s)
+                    {
+                        if (enchant->type[s] != ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL)
+                            continue;
+
+                        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(enchant->spellid[s]);
+                        if (!spellInfo)
+                        {
+                            LOG_ERROR("misc", "Player::CastItemCombatSpell Enchant %i, player (Name: %s, %s) cast unknown spell %i",
+                                enchant->ID, player->GetName().c_str(), player->GetGUID().ToString().c_str(), enchant->spellid[s]);
+                            continue;
+                        }
+
+                        // Proc only rogue poisons
+                        if (spellInfo->SpellFamilyName != SPELLFAMILY_ROGUE || spellInfo->Dispel != DISPEL_POISON)
+                            continue;
+
+                        if (spellInfo->IsPositive())
+                            player->CastSpell(player, enchant->spellid[s], true, item);
+                        else
+                            player->CastSpell(target, enchant->spellid[s], true, item);
+                    }
+                }
+            }
         }
 
         void Register() override
