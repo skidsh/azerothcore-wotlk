@@ -2353,18 +2353,31 @@ void AuraEffect::HandleAuraCloneCaster(AuraApplication const* aurApp, uint8 mode
 
     if (apply)
     {
+        // Caster can be player or creature, the unit who pCreature will become an clone of.
         Unit* caster = GetCaster();
-        if (!caster || caster == target)
-            return;
 
-        // What must be cloned? at least display and scale
-        target->SetDisplayId(caster->GetDisplayId());
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 0, caster->getRace());
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 1, caster->getClass());
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 2, caster->getGender());
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 3, caster->getPowerType());
+
         target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_MIRROR_IMAGE);
+
+        target->SetDisplayId(caster->GetNativeDisplayId());
     }
     else
     {
-        target->SetDisplayId(target->GetNativeDisplayId());
+        const CreatureTemplate* cinfo = static_cast<Creature*>(target)->GetCreatureTemplate();
+        const CreatureModelInfo* minfo = sObjectMgr->GetCreatureModelInfo(target->GetNativeDisplayId());
+
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 0, 0);
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 1, cinfo->unit_class);
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 2, minfo->gender);
+        target->SetByteValue(UNIT_FIELD_BYTES_0, 3, 0);
+
         target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_MIRROR_IMAGE);
+
+        target->SetDisplayId(target->GetNativeDisplayId());
     }
 }
 
@@ -5888,6 +5901,11 @@ void AuraEffect::HandlePeriodicTriggerSpellAuraTick(Unit* target, Unit* caster) 
     SpellInfo const* auraSpellInfo = GetSpellInfo();
     uint32 auraId = auraSpellInfo->Id;
 
+    if (triggeredSpellInfo != nullptr && target->HasAura(triggerSpellId) 
+        && triggeredSpellInfo->StackAmount == target->GetAura(triggerSpellId)->GetStackAmount()) {
+        return;
+    }
+    
     // specific code for cases with no trigger spell provided in field
     if (triggeredSpellInfo == nullptr)
     {
