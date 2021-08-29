@@ -1573,6 +1573,31 @@ bool SpellInfo::IsStrongerAuraActive(Unit const* caster, Unit const* target) con
     if (!target)
         return false;
 
+    if (CastTimeEntry->ID == 1) // instant spells only checked here
+    {
+        uint32 aura_effmask = 0;
+        for (SpellEffectInfo const effect : Effects)
+            if (effect.IsUnitOwnedAuraEffect())
+                aura_effmask |= 1 << effect.Effect;
+
+        if (aura_effmask)
+        {
+            DiminishingGroup group = GetDiminishingReturnsGroupForSpell(this, false);
+            if (group)
+            {
+                DiminishingReturnsType type = GetDiminishingReturnsGroupType(group);
+                if (type == DRTYPE_ALL || (type == DRTYPE_PLAYER && target->GetCharmerOrOwnerPlayerOrPlayerItself() != nullptr))
+                {
+                    Unit* t = (Unit*) target;
+                    if (t->HasStrongerAuraWithDR(this, (Unit*) caster))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
     // xinef: check spell group
     uint32 groupId = sSpellMgr->GetSpellGroup(Id);
     if (!groupId)

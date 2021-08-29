@@ -3564,6 +3564,39 @@ void Spell::_cast(bool skipCheck)
                 }
             }
         }
+
+        // check diminishing returns (again, only after finish cast bar, tested on retail)
+        if (Unit* target = m_targets.GetUnitTarget())
+        {
+            uint32 aura_effmask = 0;
+            for (SpellEffectInfo const effect : m_spellInfo->Effects)
+                if (effect.IsUnitOwnedAuraEffect())
+                    aura_effmask |= 1 << effect.Effect;
+
+            if (aura_effmask)
+            {
+                DiminishingGroup group = GetDiminishingReturnsGroupForSpell(m_spellInfo, m_triggeredByAuraSpell);
+                if (group)
+                {
+                    DiminishingReturnsType type = GetDiminishingReturnsGroupType(group);
+                    if (type == DRTYPE_ALL || (type == DRTYPE_PLAYER && target->GetCharmerOrOwnerPlayerOrPlayerItself() != nullptr))
+                    {
+                        if (Unit* caster = m_originalCaster ? m_originalCaster : m_caster->ToUnit())
+                        {
+                            if (target->HasStrongerAuraWithDR(m_spellInfo, caster))
+                            {
+                                SendCastResult(SPELL_FAILED_AURA_BOUNCED);
+                                SendInterrupted(0);
+
+                                finish(false);
+                                SetExecutedCurrently(false);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     if (modOwner)

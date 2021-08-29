@@ -1390,6 +1390,7 @@ private:
 class Unit : public WorldObject
 {
 public:
+    bool HasStrongerAuraWithDR(SpellInfo const* auraSpellInfo, Unit* caster);
     typedef std::unordered_set<Unit*> AttackerSet;
     typedef std::set<Unit*> ControlSet;
 

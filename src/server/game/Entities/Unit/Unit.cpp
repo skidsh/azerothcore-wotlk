@@ -20324,3 +20324,24 @@ float Unit::GetCollisionHeight() const
 
     return collisionHeight == 0.0f ? defaultHeight : collisionHeight;
 }
+
+bool Unit::HasStrongerAuraWithDR(SpellInfo const* auraSpellInfo, Unit* caster)
+{
+    DiminishingGroup  diminishGroup = GetDiminishingReturnsGroupForSpell(auraSpellInfo, false);
+    DiminishingLevels level         = GetDiminishing(diminishGroup);
+    for (auto itr = m_appliedAuras.begin(); itr != m_appliedAuras.end(); ++itr)
+    {
+        SpellInfo const* spellInfo = itr->second->GetBase()->GetSpellInfo();
+        if (GetDiminishingReturnsGroupForSpell(spellInfo, false) != diminishGroup)
+            continue;
+
+        int32 existingDuration = itr->second->GetBase()->GetDuration();
+        int32 newDuration      = auraSpellInfo->GetMaxDuration();
+        ApplyDiminishingToDuration(diminishGroup, newDuration, caster, level, 10);
+        newDuration = newDuration * IN_MILLISECONDS;
+        if (newDuration > 0 && newDuration < existingDuration)
+            return true;
+    }
+
+    return false;
+}
