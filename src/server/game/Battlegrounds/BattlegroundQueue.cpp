@@ -111,7 +111,10 @@ bool BattlegroundQueue::SelectionPool::AddGroup(GroupQueueInfo* ginfo, uint32 de
 /*********************************************************/
 /***               BATTLEGROUND QUEUES                 ***/
 /*********************************************************/
-
+bool biggerGroupsFirst(const GroupQueueInfo* a, const GroupQueueInfo* b)
+{
+    return a->Players.size() > b->Players.size();
+}
 // add group or player (grp == nullptr) to bg queue with the given leader and bg specifications
 GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, PvPDifficultyEntry const* bracketEntry, bool isRated, bool isPremade, uint32 ArenaRating, uint32 MatchmakerRating, uint32 arenateamid)
 {
@@ -175,6 +178,12 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, PvPDiffi
 
     //add GroupInfo to m_QueuedGroups
     m_QueuedGroups[bracketId][index].push_back(ginfo);
+
+    //sort m_QueuedGroups for skirmishes to priotize grouped players
+    if (ginfo->BgTypeId == BATTLEGROUND_AA)
+    {
+        m_QueuedGroups[bracketId][index].sort(biggerGroupsFirst);
+    }
 
     // announce world (this doesn't need mutex)
     SendJoinMessageArenaQueue(leader, ginfo, bracketEntry, isRated);
