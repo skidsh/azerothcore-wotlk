@@ -874,12 +874,26 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
 {
     LOG_DEBUG("network", "WORLD: Sent SMSG_LIST_INVENTORY");
 
-    Creature* vendor = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
-    if (!vendor)
+    WorldObject*          wo = ObjectAccessor::GetWorldObject(*GetPlayer(), vendorGuid);
+    VendorItemData const* items;
+    float                 discountMod = 1.0f;
+    Creature*             vendor      = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
+
+    if (wo->GetTypeId() == TYPEID_UNIT)
     {
-        LOG_DEBUG("network", "WORLD: SendListInventory - Unit (%s) not found or you can not interact with him.", vendorGuid.ToString().c_str());
-        _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, nullptr, ObjectGuid::Empty, 0);
-        return;
+        if (!vendor)
+        {
+            LOG_DEBUG("network", "WORLD: SendListInventory - Unit (%s) not found or you can not interact with him.", vendorGuid.ToString().c_str());
+            _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, nullptr, ObjectGuid::Empty, 0);
+            return;
+        }
+        // Stop the npc if moving
+        if (vendor->HasUnitState(UNIT_STATE_MOVING))
+        {
+            vendor->StopMoving();
+        }
+        items = vendor->GetVendorItems();
+        discountMod = _player->GetReputationPriceDiscount(vendor);
     }
 
     // remove fake death
@@ -888,15 +902,9 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
         GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
     }
 
-    // Stop the npc if moving
-    if (vendor->HasUnitState(UNIT_STATE_MOVING))
-    {
-        vendor->StopMoving();
-    }
-
     SetCurrentVendor(vendorEntry);
 
-    VendorItemData const* items = vendorEntry ? sObjectMgr->GetNpcVendorItemList(vendorEntry) : vendor->GetVendorItems();
+    items = vendorEntry ? sObjectMgr->GetNpcVendorItemList(vendorEntry) : items;
     if (!items)
     {
         WorldPacket data(SMSG_LIST_INVENTORY, 8 + 1 + 1);
@@ -916,8 +924,6 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
     size_t countPos = data.wpos();
     data << uint8(count);
 
-    float discountMod = _player->GetReputationPriceDiscount(vendor);
-
     for (uint8 slot = 0; slot < itemCount; ++slot)
     {
         if (VendorItem const* item = items->GetItem(slot))
@@ -934,19 +940,22 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
                 {
                     continue;
                 }
-
-                // Items sold out are not displayed in list
-                uint32 leftInStock = !item->maxcount ? 0xFFFFFFFF : vendor->GetVendorItemCurrentCount(item);
-                if (!_player->IsGameMaster() && !leftInStock)
+                uint32 leftInStock = 0xFFFFFFFF;
+                if (vendor != nullptr)
                 {
-                    continue;
-                }
+                    // Items sold out are not displayed in list
+                    leftInStock = !item->maxcount ? 0xFFFFFFFF : vendor->GetVendorItemCurrentCount(item);
+                    if (!_player->IsGameMaster() && !leftInStock)
+                    {
+                        continue;
+                    }
 
-                ConditionList conditions = sConditionMgr->GetConditionsForNpcVendorEvent(vendor->GetEntry(), item->item);
-                if (!sConditionMgr->IsObjectMeetToConditions(_player, vendor, conditions))
-                {
-                    LOG_DEBUG("network", "SendListInventory: conditions not met for creature entry %u item %u", vendor->GetEntry(), item->item);
-                    continue;
+                    ConditionList conditions = sConditionMgr->GetConditionsForNpcVendorEvent(vendor->GetEntry(), item->item);
+                    if (!sConditionMgr->IsObjectMeetToConditions(_player, vendor, conditions))
+                    {
+                        LOG_DEBUG("network", "SendListInventory: conditions not met for creature entry %u item %u", vendor->GetEntry(), item->item);
+                        continue;
+                    }
                 }
 
                 // reputation discount
