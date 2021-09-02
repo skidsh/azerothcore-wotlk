@@ -14049,6 +14049,24 @@ void Player::_SaveTalents(CharacterDatabaseTransaction trans)
     }
 }
 
+void Player::SyncSpentTalents(Player* player)
+{
+    int spentTalents = 0;
+    for (PlayerTalentMap::iterator itr = m_talents.begin(); itr != m_talents.end(); ++itr)
+    {
+        if (itr->second->State == PLAYERSPELL_REMOVED)
+            continue;
+        // xinef: talent not in new spec
+        if (!(itr->second->specMask & GetActiveSpecMask()))
+            continue;
+
+        TalentSpellPos const* talentPos = GetTalentSpellPos(itr->first);
+        spentTalents += talentPos->rank + 1;
+    }
+    m_usedTalentCount = spentTalents;
+    InitTalentForLevel();
+}
+
 void Player::ActivateSpec(uint8 spec)
 {
     // xinef: some basic checks
