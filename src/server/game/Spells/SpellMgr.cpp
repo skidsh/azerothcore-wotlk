@@ -4416,8 +4416,6 @@ void SpellMgr::LoadDbcDataCorrections()
     // Fingers of Frost
     ApplySpellFix({ 44544 }, [](SpellEntry* spellInfo)
     {
-        spellInfo->Dispel = DISPEL_NONE;
-        spellInfo->AttributesEx4 |= SPELL_ATTR4_CANNOT_BE_STOLEN;
         spellInfo->EffectSpellClassMask[0] = flag96(685904631, 1151040, 32);
     });
 
