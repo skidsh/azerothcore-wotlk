@@ -315,6 +315,7 @@ void Minion::setDeathState(DeathState s, bool despawn)
     if (s == JUST_DIED && IsGuardianPet())
         if (Unit* owner = GetOwner())
             if (owner->GetTypeId() == TYPEID_PLAYER && owner->GetMinionGUID() == GetGUID())
+            {
                 for (Unit::ControlSet::const_iterator itr = owner->m_Controlled.begin(); itr != owner->m_Controlled.end(); ++itr)
                     if ((*itr)->IsAlive() && (*itr)->GetEntry() == GetEntry())
                     {
@@ -322,6 +323,12 @@ void Minion::setDeathState(DeathState s, bool despawn)
                         owner->SetPetGUID((*itr)->GetGUID());
                         owner->ToPlayer()->CharmSpellInitialize();
                     }
+                if (Player * player = owner->ToPlayer())
+                {
+                    player->RemoveAllMinionsByEntry(GetEntry());
+                }
+            }
+
 }
 
 Guardian::Guardian(SummonPropertiesEntry const* properties, ObjectGuid owner, bool isWorldObject) : Minion(properties, owner, isWorldObject)
