@@ -1368,8 +1368,23 @@ void Aura::HandleAuraSpecificMods(AuraApplication const* aurApp, Unit* caster, b
                                 aur->RefreshDuration();
                             }
                             else
+                            {
                                 target->AddAura(74396, target);
+                                if (caster != target)
+                                {
+                                    // spell steal ?? : jax
+                                    if (Aura* aurC = caster->GetAura(74396))
+                                        if (Aura* aurT = target->GetAura(74396))
+                                        {
+                                            aurT->SetDuration(aurC->GetDuration());
+                                            aurT->SetCharges(aurC->GetCharges());
+                                        }
+                                    caster->RemoveAurasDueToSpell(74396);
+                                }
+                            }   
+                            break;
                         }
+                            break;
                     default:
                         break;
                 }

@@ -4356,7 +4356,14 @@ void Unit::RemoveAurasDueToSpellByDispel(uint32 spellId, uint32 dispellerSpellId
                             if (AuraEffect* aureff = GetAuraEffect(SPELL_AURA_MOD_DECREASE_SPEED, SPELLFAMILY_DEATHKNIGHT, 0, 0x40000, 0, casterGUID))
                                 RemoveAurasDueToSpell(aureff->GetId());
                         }
+                        break;
                     }
+                case SPELLFAMILY_MAGE:
+                {
+                    if (spellId == 44544)
+                        RemoveAurasDueToSpell(74396);              
+                    break;
+                }
                 default:
                     break;
             }
