@@ -17133,6 +17133,7 @@ void Unit::SetStunned(bool apply)
         // setting MOVEMENTFLAG_ROOT
         RemoveUnitMovementFlag(MOVEMENTFLAG_MASK_MOVING);
         AddUnitMovementFlag(MOVEMENTFLAG_ROOT);
+        StopMoving();
 
         if (GetTypeId() == TYPEID_PLAYER)
         {
@@ -17140,6 +17141,9 @@ void Unit::SetStunned(bool apply)
             data << GetPackGUID();
             data << m_rootTimes;
             SendMessageToSet(&data, true);
+            
+            SetStandState(UNIT_STAND_STATE_STAND);
+            sScriptMgr->AnticheatSetSkipOnePacketForASH(ToPlayer(), true);
         }
         else
         {
@@ -17149,16 +17153,7 @@ void Unit::SetStunned(bool apply)
         }
 
         // xinef: inform client about our current orientation
-        SendMovementFlagUpdate(true);
-
-        // Creature specific
-        if (GetTypeId() != TYPEID_PLAYER)
-            StopMoving();
-        else
-        {
-            SetStandState(UNIT_STAND_STATE_STAND);
-            sScriptMgr->AnticheatSetSkipOnePacketForASH(ToPlayer(), true);
-        }
+        SendMovementFlagUpdate();
 
         CastStop();
     }
