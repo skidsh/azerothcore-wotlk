@@ -325,7 +325,7 @@ void Minion::setDeathState(DeathState s, bool despawn)
                     }
                 if (Player * player = owner->ToPlayer())
                 {
-                    player->RemoveAllMinionsByEntry(GetEntry());
+                    player->SetMinion(this, false);
                 }
             }
 
