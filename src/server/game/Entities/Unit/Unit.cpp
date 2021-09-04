@@ -2075,11 +2075,7 @@ void Unit::CalcAbsorbResist(Unit* attacker, Unit* victim, SpellSchoolMask school
             if (!caster || (caster == victim) || !caster->IsInWorld() || !caster->IsAlive())
                 continue;
 
-            // Xinef: Single Target splits require LoS
             const SpellInfo* splitSpellInfo = (*itr)->GetSpellInfo();
-            if (!splitSpellInfo->Effects[(*itr)->GetEffIndex()].IsAreaAuraEffect() && !splitSpellInfo->HasAttribute(SPELL_ATTR2_IGNORE_LINE_OF_SIGHT))
-                if (!caster->IsWithinLOSInMap(victim) || !caster->IsWithinDist(victim, splitSpellInfo->GetMaxRange(splitSpellInfo->IsPositive(), caster)))
-                    continue;
 
             uint32 splitDamage = CalculatePct(dmgInfo.GetDamage(), (*itr)->GetAmount());
             SpellSchoolMask splitSchoolMask  = schoolMask;
