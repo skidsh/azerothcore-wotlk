@@ -14049,7 +14049,7 @@ void Player::_SaveTalents(CharacterDatabaseTransaction trans)
     }
 }
 
-void Player::SyncSpentTalents(Player* player)
+void Player::SyncSpentTalents()
 {
     int spentTalents = 0;
     for (PlayerTalentMap::iterator itr = m_talents.begin(); itr != m_talents.end(); ++itr)
