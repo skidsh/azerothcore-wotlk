@@ -16593,9 +16593,6 @@ bool Unit::HandleAuraRaidProcFromChargeWithValue(AuraEffect* triggeredByAura)
     // jumps
     int32 jumps = triggeredByAura->GetBase()->GetCharges() - 1;
 
-    // current aura expire
-    triggeredByAura->GetBase()->SetCharges(1);             // will removed at next charges decrease
-
     // next target selection
     if (jumps > 0)
     {
@@ -16652,10 +16649,15 @@ bool Unit::HandleAuraRaidProcFromChargeWithValue(AuraEffect* triggeredByAura)
                     if (Unit* target = nearMembers.front())
                     {
                         CastSpell(target, 41637 /*Dummy visual effect triggered by main spell cast*/, true);
-                        CastCustomSpell(target, spellProto->Id, &heal, nullptr, nullptr, true, nullptr, triggeredByAura, caster_guid);
-                        if (Aura* aura = target->GetAura(spellProto->Id, caster->GetGUID()))
-                            aura->SetCharges(jumps);
+                        CustomSpellValues values;
+                        values.AddSpellMod(SPELLVALUE_BASE_POINT0, heal);
+                        values.AddSpellMod(SPELLVALUE_CHARGES, jumps);
+                        CastCustomSpell(spellProto->Id, values, target, TRIGGERED_FULL_MASK, nullptr, triggeredByAura, caster_guid);
                     }
+                }
+                else {
+                    // current aura expire
+                    triggeredByAura->GetBase()->SetCharges(1); // will removed at next charges decrease
                 }
             }
         }

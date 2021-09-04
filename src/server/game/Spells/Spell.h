@@ -201,6 +201,7 @@ struct SpellValue
     float     RadiusMod;
     uint8     AuraStackAmount;
     bool      ForcedCritResult;
+    uint8     Charges;
 };
 
 enum SpellState
