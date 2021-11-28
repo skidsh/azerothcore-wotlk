@@ -403,7 +403,7 @@ void Player::UpdateFFAPvPFlag(time_t currTime)
 
 void Player::UpdateDuelFlag(time_t currTime)
 {
-    if (!duel || duel->startTimer == 0 || currTime < duel->startTimer + 3)
+    if (!duel || duel->StartTime == 0 || currTime < duel->StartTime)
         return;
 
     Map* map = sMapMgr->FindMap(this->GetMapId(), this->GetInstanceId());
@@ -416,15 +416,13 @@ void Player::UpdateDuelFlag(time_t currTime)
         }
     }
 
-    sScriptMgr->OnPlayerDuelStart(this, duel->opponent);
+    sScriptMgr->OnPlayerDuelStart(this, duel->Opponent);
     
     SetUInt32Value(PLAYER_DUEL_TEAM, 1);
-    duel->opponent->SetUInt32Value(PLAYER_DUEL_TEAM, 2);
+    duel->Opponent->SetUInt32Value(PLAYER_DUEL_TEAM, 2);
 
-    duel->startTimer = 0;
-    duel->startTime  = currTime;
-    duel->opponent->duel->startTimer = 0;
-    duel->opponent->duel->startTime  = currTime;
+    duel->StartTime = currTime;
+    duel->Opponent->duel->StartTime  = currTime;
 }
 
 /*********************************************************/

@@ -347,12 +347,6 @@ class spell_gen_allow_proc_from_spells_with_cost : public AuraScript
     }
 };
 
-    AuraScript* GetAuraScript() const override
-    {
-        return new spell_gen_allow_proc_from_spells_with_cost_AuraScript();
-    }
-};
-
 /* 32728 - Arena Preparation
    44521 - Preparation */
 class spell_gen_bg_preparation : public AuraScript

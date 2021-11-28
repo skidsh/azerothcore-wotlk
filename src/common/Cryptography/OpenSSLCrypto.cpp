@@ -21,6 +21,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <openssl/crypto.h>
 std::vector<std::mutex*> cryptoLocks;
 static void lockingCallback(int mode, int type, char const* /*file*/, int /*line*/)
 {

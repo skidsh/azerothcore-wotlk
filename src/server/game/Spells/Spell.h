@@ -551,7 +551,7 @@ public:
     uint64 GetDelayMoment() const { return m_delayMoment; }
     uint64 GetDelayTrajectory() const { return m_delayTrajectory; }
 
-    uint64 CalculateDelayMomentForDst() const;
+    uint64 CalculateDelayMomentForDst();
     void RecalculateDelayMomentForDst();
     bool IsNeedSendToClient(bool go) const;
 

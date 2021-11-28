@@ -1928,7 +1928,7 @@ bool WorldObject::CanSeeOrDetect(WorldObject const* obj, bool ignoreStealth, boo
 
     // jax: hide non-opponents while dueling
     if (this->GetTypeId() == TYPEID_PLAYER && obj->GetTypeId() == TYPEID_PLAYER)
-        if (((const Player*)this)->duel != NULL && ((const Player*)this)->duel->opponent != obj)
+        if (((const Player*)this)->duel != NULL && ((const Player*)this)->duel->Opponent != obj)
             return false;
 
     // pussywizard: arena spectator

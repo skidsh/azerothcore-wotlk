@@ -97,11 +97,6 @@ void Pet::AddToWorld()
         GetCharmInfo()->SetIsFollowing(false);
         GetCharmInfo()->SetIsReturning(false);
     }
-
-#ifdef ELUNA
-    if (GetOwnerGUID().IsPlayer())
-        sEluna->OnPetAddedToWorld(GetOwner(), this);
-#endif
 }
 
 void Pet::RemoveFromWorld()
