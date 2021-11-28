@@ -2,6 +2,7 @@
 # AzerothCore
 #
 
+/src/cmake
 /conf/*
 !/conf/dist
 /modules/*
