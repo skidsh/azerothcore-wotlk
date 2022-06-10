@@ -21,6 +21,7 @@
 #include "Battleground.h"
 #include "CalendarMgr.h"
 #include "CharacterCache.h"
+#include "CharacterPackets.h"
 #include "Chat.h"
 #include "Common.h"
 #include "DatabaseEnv.h"
@@ -55,10 +56,6 @@
 #include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-
-#ifdef ELUNA
-#include "LuaEngine.h"
-#endif
 
 class LoginQueryHolder : public CharacterDatabaseQueryHolder
 {
@@ -206,8 +203,16 @@ bool LoginQueryHolder::Initialize()
     res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_LOAD_INSTANCE_LOCK_TIMES, stmt);
 
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CORPSE_LOCATION);
-    stmt->setUInt64(0, lowGuid);
+    stmt->setUInt32(0, lowGuid);
     res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_LOAD_CORPSE_LOCATION, stmt);
+
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_SETTINGS);
+    stmt->setUInt32(0, lowGuid);
+    res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_LOAD_CHARACTER_SETTINGS, stmt);
+
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_PETS);
+    stmt->setUInt32(0, lowGuid);
+    res &= SetPreparedQuery(PLAYER_LOGIN_QUERY_LOAD_PET_SLOTS, stmt);
 
     return res;
 }
@@ -983,34 +988,53 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder const& holder)
         pCurrChar->CheckAllAchievementCriteria();
     }
 
-    // Reputations if "StartAllReputation" is enabled, -- TODO: Fix this in a better way
-    if (sWorld->getBoolConfig(CONFIG_START_ALL_REP))
+    bool firstLogin = pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST);
+    if (firstLogin)
     {
-        ReputationMgr& repMgr = pCurrChar->GetReputationMgr();
-
-        auto SendFullReputation = [&repMgr](std::initializer_list<uint32> factionsList)
+        PlayerInfo const* info = sObjectMgr->GetPlayerInfo(pCurrChar->getRace(), pCurrChar->getClass());
+        for (uint32 spellId : info->castSpells)
         {
-            for (auto const& itr : factionsList)
-            {
-                repMgr.SetOneFactionReputation(sFactionStore.LookupEntry(itr), 42999, false);
-            }
-        };
-
-        SendFullReputation({ 942, 935, 936, 1011, 970, 967, 989, 932, 934, 1038, 1077, 1106, 1104, 1090, 1098, 1156, 1073, 1105, 1119, 1091 });
-
-        switch (pCurrChar->GetFaction())
-        {
-            case ALLIANCE:
-                SendFullReputation({ 72, 47, 69, 930, 730, 978, 54, 946, 1037, 1068, 1126, 1094, 1050 });
-                break;
-            case HORDE:
-                SendFullReputation({ 76, 68, 81, 911, 729, 941, 530, 947, 1052, 1067, 1124, 1064, 1085 });
-                break;
-            default:
-                break;
+            pCurrChar->CastSpell(pCurrChar, spellId, true);
         }
 
-        repMgr.SendStates();
+        // start with every map explored
+        if (sWorld->getBoolConfig(CONFIG_START_ALL_EXPLORED))
+        {
+            for (uint8 i = 0; i < PLAYER_EXPLORED_ZONES_SIZE; i++)
+            {
+                pCurrChar->SetFlag(PLAYER_EXPLORED_ZONES_1 + i, 0xFFFFFFFF);
+            }
+        }
+
+        // Reputations if "StartAllReputation" is enabled, -- TODO: Fix this in a better way
+        if (sWorld->getBoolConfig(CONFIG_START_ALL_REP))
+        {
+            ReputationMgr& repMgr = pCurrChar->GetReputationMgr();
+
+            auto SendFullReputation = [&repMgr](std::initializer_list<uint32> factionsList)
+            {
+                for (auto const& itr : factionsList)
+                {
+                    repMgr.SetOneFactionReputation(sFactionStore.LookupEntry(itr), 42999, false);
+                }
+            };
+
+            SendFullReputation({ 942, 935, 936, 1011, 970, 967, 989, 932, 934, 1038, 1077, 1106, 1104, 1090, 1098, 1156, 1073, 1105, 1119, 1091 });
+
+            switch (pCurrChar->GetFaction())
+            {
+                case ALLIANCE:
+                    SendFullReputation({ 72, 47, 69, 930, 730, 978, 54, 946, 1037, 1068, 1126, 1094, 1050 });
+                    break;
+                case HORDE:
+                    SendFullReputation({ 76, 68, 81, 911, 729, 941, 530, 947, 1052, 1067, 1124, 1064, 1085 });
+                    break;
+                default:
+                    break;
+            }
+
+            repMgr.SendStates();
+        }
     }
 
     // show time before shutdown if shutdown planned.
@@ -1176,9 +1200,9 @@ void WorldSession::HandlePlayerLoginToCharInWorld(Player* pCurrChar)
 
                 _mask[i] = uint32(1) << (eff - (32 * i));
                 int32 val = 0;
-                for (SpellModList::const_iterator itr = spellMods.begin(); itr != spellMods.end(); ++itr)
-                    if ((*itr)->type == modType && (*itr)->mask & _mask)
-                        val += (*itr)->value;
+                for (auto const& spellMod : spellMods)
+                    if (spellMod->type == modType && spellMod->mask & _mask)
+                        val += spellMod->value;
 
                 if (val == 0)
                     continue;
@@ -1292,18 +1316,20 @@ void WorldSession::HandleSetFactionInactiveOpcode(WorldPacket& recvData)
     _player->GetReputationMgr().SetInactive(replistid, inactive);
 }
 
-void WorldSession::HandleShowingHelmOpcode(WorldPacket& recvData)
+void WorldSession::HandleShowingHelmOpcode(WorldPackets::Character::ShowingHelm& packet)
 {
-    LOG_DEBUG("network.opcode", "CMSG_SHOWING_HELM for %s", _player->GetName().c_str());
-    recvData.read_skip<uint8>(); // unknown, bool?
-    _player->ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_HELM);
+    if (packet.ShowHelm)
+        _player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_HELM);
+    else
+        _player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_HELM);
 }
 
-void WorldSession::HandleShowingCloakOpcode(WorldPacket& recvData)
+void WorldSession::HandleShowingCloakOpcode(WorldPackets::Character::ShowingCloak& packet)
 {
-    LOG_DEBUG("network.opcode", "CMSG_SHOWING_CLOAK for %s", _player->GetName().c_str());
-    recvData.read_skip<uint8>(); // unknown, bool?
-    _player->ToggleFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_CLOAK);
+    if (packet.ShowCloak)
+        _player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_CLOAK);
+    else
+        _player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_HIDE_CLOAK);
 }
 
 void WorldSession::HandleCharRenameOpcode(WorldPacket& recvData)
@@ -2100,7 +2126,7 @@ void WorldSession::HandleCharFactionOrRaceChangeCallback(std::shared_ptr<Charact
         GetAccountId(), GetRemoteAddress().c_str(), playerData->Name.c_str(), lowGuid, factionChangeInfo->Name.c_str());
 
     // xinef: update global data
-    sCharacterCache->UpdateCharacterData(factionChangeInfo->Guid, factionChangeInfo->Name);
+    sCharacterCache->UpdateCharacterData(factionChangeInfo->Guid, factionChangeInfo->Name, factionChangeInfo->Gender, factionChangeInfo->Race);
 
     if (oldRace != factionChangeInfo->Race)
     {
