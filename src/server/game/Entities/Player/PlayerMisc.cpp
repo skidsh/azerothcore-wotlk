@@ -429,6 +429,9 @@ void Player::UpdateDuelFlag(time_t currTime)
 
     duel->StartTime = currTime;
     duel->Opponent->duel->StartTime  = currTime;
+
+    duel->State = DUEL_STATE_IN_PROGRESS;
+    duel->Opponent->duel->State = DUEL_STATE_IN_PROGRESS;
 }
 
 /*********************************************************/
