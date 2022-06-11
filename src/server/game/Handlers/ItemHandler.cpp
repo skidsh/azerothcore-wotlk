@@ -1021,10 +1021,12 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
         GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
     }
 
-    // Stop the npc if moving
-    if (uint32 pause = vendor->GetMovementTemplate().GetInteractionPauseTimer())
-        vendor->PauseMovement(pause);
-    vendor->SetHomePosition(vendor->GetPosition());
+    // Stop the npc if moving if vendor exists
+    if (vendor != nullptr) {
+        if (uint32 pause = vendor->GetMovementTemplate().GetInteractionPauseTimer())
+            vendor->PauseMovement(pause);
+        vendor->SetHomePosition(vendor->GetPosition());
+    }
 
     SetCurrentVendor(vendorEntry);
 
@@ -1073,12 +1075,12 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
                     {
                         continue;
                     }
-
-                ConditionList conditions = sConditionMgr->GetConditionsForNpcVendorEvent(vendor->GetEntry(), item->item);
-                if (!sConditionMgr->IsObjectMeetToConditions(_player, vendor, conditions))
-                {
-                    LOG_DEBUG("network", "SendListInventory: conditions not met for creature entry {} item {}", vendor->GetEntry(), item->item);
-                    continue;
+                    ConditionList conditions = sConditionMgr->GetConditionsForNpcVendorEvent(vendor->GetEntry(), item->item);
+                    if (!sConditionMgr->IsObjectMeetToConditions(_player, vendor, conditions))
+                    {
+                        LOG_DEBUG("network", "SendListInventory: conditions not met for creature entry {} item {}", vendor->GetEntry(), item->item);
+                        continue;
+                    }
                 }
 
                 // reputation discount

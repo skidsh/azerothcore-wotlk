@@ -2545,8 +2545,6 @@ public:
     [[nodiscard]] Optional<float> GetFarSightDistance() const;
 
     float GetSightRange(WorldObject const* target = nullptr) const override;
-
-    float GetSightRange(const WorldObject* target = nullptr) const override;
     
     uint32 GetItemDisplayIdInSlot(uint8 bag, uint8 slot) const;
 

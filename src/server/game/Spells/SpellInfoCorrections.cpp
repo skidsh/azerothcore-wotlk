@@ -1139,14 +1139,13 @@ void SpellMgr::LoadSpellInfoCorrections()
     // Fingers of Frost
     ApplySpellFix({ 44544 }, [](SpellInfo* spellInfo)
     {
-        spellInfo->Dispel = DISPEL_NONE;
-        spellInfo->AttributesEx4 |= SPELL_ATTR4_CANNOT_BE_STOLEN;
         spellInfo->Effects[EFFECT_0].SpellClassMask = flag96(685904631, 1151040, 32);
     });
 
     // Fingers of Frost visual buff
     ApplySpellFix({ 74396 }, [](SpellInfo* spellInfo)
     {
+        spellInfo->Dispel = DISPEL_MAGIC;
         spellInfo->ProcCharges = 2;
         spellInfo->StackAmount = 0;
     });
@@ -4450,10 +4449,10 @@ void SpellMgr::LoadSpellInfoCorrections()
     achievement->mapID = 631;    // Correct map requirement (currently has Ulduar)
 
     // Ring of Valor starting Locations
-    GraveyardStruct const* entry = sGraveyard->GetGraveyard(1364);
-    const_cast<GraveyardStruct*>(entry)->z += 6.0f;
-    entry = sGraveyard->GetGraveyard(1365);
-    const_cast<GraveyardStruct*>(entry)->z += 6.0f;
+    //GraveyardStruct const* entry = sGraveyard->GetGraveyard(1364);
+    //const_cast<GraveyardStruct*>(entry)->z += 6.0f;
+    //entry = sGraveyard->GetGraveyard(1365);
+    //const_cast<GraveyardStruct*>(entry)->z += 6.0f;
 
     LockEntry* key = const_cast<LockEntry*>(sLockStore.LookupEntry(36)); // 3366 Opening, allows to open without proper key
     key->Type[2] = LOCK_KEY_NONE;
