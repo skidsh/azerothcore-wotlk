@@ -31,15 +31,15 @@ enum Says
 {
     SAY_AGGRO                   = 0,
     SAY_FLEEING                 = 1,
-    SAY_MINION_DESTROY          = 2,     // Where does it belong?
-    SAY_PROTECT_ALTAR           = 3      // Where does it belong?
+    SAY_MINION_DESTROY          = 2,
+    SAY_PROTECT_ALTAR           = 3
 };
 
 enum Spells
 {
     SPELL_BLOOD_SIPHON          = 24322, // Buggy ?
     SPELL_CORRUPTED_BLOOD       = 24328,
-    SPELL_CAUSE_INSANITY        = 24327, // Spell needs scripting.
+    SPELL_CAUSE_INSANITY        = 24327,
     SPELL_WILL_OF_HAKKAR        = 24178,
     SPELL_ENRAGE                = 24318,
     // The Aspects of all High Priests spells
@@ -54,7 +54,7 @@ enum Events
 {
     EVENT_BLOOD_SIPHON          = 1,
     EVENT_CORRUPTED_BLOOD       = 2,
-    EVENT_CAUSE_INSANITY        = 3,     // Spell needs scripting. Event disabled
+    EVENT_CAUSE_INSANITY        = 3,
     EVENT_WILL_OF_HAKKAR        = 4,
     EVENT_ENRAGE                = 5,
     // The Aspects of all High Priests events
@@ -128,8 +128,11 @@ public:
                         events.ScheduleEvent(EVENT_CORRUPTED_BLOOD, urand(30000, 45000));
                         break;
                     case EVENT_CAUSE_INSANITY:
-                        // DoCast(SelectTarget(SelectTargetMethod::Random, 0, 100, true), SPELL_CAUSE_INSANITY);
-                        // events.ScheduleEvent(EVENT_CAUSE_INSANITY, urand(35000, 45000));
+                        if (Unit* victim = SelectTarget(SelectTargetMethod::MaxThreat, 0))
+                        {
+                            DoCast(victim, SPELL_CAUSE_INSANITY, true);
+                        }
+                        events.ScheduleEvent(EVENT_CAUSE_INSANITY, urand(35000, 45000));
                         break;
                     case EVENT_WILL_OF_HAKKAR:
                         // Xinef: Skip Tank
@@ -203,8 +206,31 @@ public:
     }
 };
 
+class at_zulgurub_temple_speech : public OnlyOnceAreaTriggerScript
+{
+public:
+    at_zulgurub_temple_speech() : OnlyOnceAreaTriggerScript("at_zulgurub_temple_speech") {}
+
+    bool _OnTrigger(Player* player, const AreaTrigger* /*at*/) override
+    {
+        if (InstanceScript* instance = player->GetInstanceScript())
+        {
+            if (Creature* hakkar = ObjectAccessor::GetCreature(*player, instance->GetGuidData(DATA_HAKKAR)))
+            {
+                if (hakkar->GetAI())
+                {
+                    hakkar->AI()->Talk(SAY_MINION_DESTROY);
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+};
+
 void AddSC_boss_hakkar()
 {
     new boss_hakkar();
     new at_zulgurub_entrance_speech();
+    new at_zulgurub_temple_speech();
 }

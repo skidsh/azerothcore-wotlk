@@ -17,8 +17,8 @@
 
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
-#include "blackrock_spire.h"
 #include "TaskScheduler.h"
+#include "blackrock_spire.h"
 
 enum Texts
 {
@@ -122,13 +122,13 @@ struct boss_mor_grayhoof : public BossAI
 
                         // Sleep can target tank, we need to drop threat temporarily on the target.
                         _sleepTargetGUID = target->GetGUID();
-                        _sleepTargetThreat = me->getThreatMgr().getThreat(target);
-                        me->getThreatMgr().modifyThreatPercent(target, -100);
+                        _sleepTargetThreat = me->GetThreatMgr().getThreat(target);
+                        me->GetThreatMgr().modifyThreatPercent(target, -100);
                         _scheduler.Schedule(10s, [this](TaskContext /*context*/)
                             {
                                 if (Unit* sleepTarget = ObjectAccessor::GetUnit(*me, _sleepTargetGUID))
                                 {
-                                    me->getThreatMgr().addThreat(sleepTarget, _sleepTargetThreat);
+                                    me->GetThreatMgr().addThreat(sleepTarget, _sleepTargetThreat);
                                 }
                             });
                     }

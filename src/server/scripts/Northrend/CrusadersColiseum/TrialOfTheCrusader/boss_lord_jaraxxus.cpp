@@ -145,7 +145,7 @@ public:
                 pInstance->SetData(TYPE_JARAXXUS, IN_PROGRESS);
         }
 
-        void SpellHit(Unit* caster, const SpellInfo* spell) override
+        void SpellHit(Unit* caster, SpellInfo const* spell) override
         {
             switch( spell->Id )
             {
@@ -279,11 +279,11 @@ public:
             summons.Summon(summon);
         }
 
-        void EnterEvadeMode() override
+        void EnterEvadeMode(EvadeReason /*why*/) override
         {
             events.Reset();
             summons.DespawnAll();
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
             if( pInstance )
                 pInstance->SetData(TYPE_FAILED, 1);
         }
@@ -355,7 +355,7 @@ public:
             me->DespawnOrUnsummon(10000);
         }
 
-        void EnterEvadeMode() override
+        void EnterEvadeMode(EvadeReason /*why*/) override
         {
             me->DespawnOrUnsummon();
         }
@@ -392,7 +392,7 @@ public:
                 events.RescheduleEvent(EVENT_SPELL_MISTRESS_KISS, urand(10000, 15000));
         }
 
-        void SpellHit(Unit*  /*caster*/, const SpellInfo*  /*spell*/) override
+        void SpellHit(Unit*  /*caster*/, SpellInfo const*  /*spell*/) override
         {
             //if (caster && spell && spell->Id == 66287 /*control vehicle*/)
             //  caster->ClearUnitState(UNIT_STATE_ONVEHICLE);
@@ -436,7 +436,7 @@ public:
             me->DespawnOrUnsummon(10000);
         }
 
-        void EnterEvadeMode() override
+        void EnterEvadeMode(EvadeReason /*why*/) override
         {
             me->DespawnOrUnsummon();
         }

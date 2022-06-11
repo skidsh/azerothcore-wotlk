@@ -70,7 +70,7 @@ enum CreatureFlagsExtra : uint32
     CREATURE_FLAG_EXTRA_NO_PLAYER_DAMAGE_REQ            = 0x00200000,   // creature does not need to take player damage for kill credit
     CREATURE_FLAG_EXTRA_AVOID_AOE                       = 0x00400000,   // pussywizard: ignored by aoe attacks (for icc blood prince council npc - Dark Nucleus)
     CREATURE_FLAG_EXTRA_NO_DODGE                        = 0x00800000,   // xinef: target cannot dodge
-    CREATURE_FLAG_EXTRA_UNUSED_25                       = 0x01000000,
+    CREATURE_FLAG_EXTRA_MODULE                          = 0x01000000,
     CREATURE_FLAG_EXTRA_UNUSED_26                       = 0x02000000,
     CREATURE_FLAG_EXTRA_UNUSED_27                       = 0x04000000,
     CREATURE_FLAG_EXTRA_UNUSED_28                       = 0x08000000,
@@ -80,7 +80,7 @@ enum CreatureFlagsExtra : uint32
     CREATURE_FLAG_EXTRA_HARD_RESET                      = 0x80000000,
 
     // Masks
-    CREATURE_FLAG_EXTRA_UNUSED                          = (CREATURE_FLAG_EXTRA_UNUSED_12 | CREATURE_FLAG_EXTRA_UNUSED_25 | CREATURE_FLAG_EXTRA_UNUSED_26 |
+    CREATURE_FLAG_EXTRA_UNUSED                          = (CREATURE_FLAG_EXTRA_UNUSED_12 | CREATURE_FLAG_EXTRA_UNUSED_26 |
                                                            CREATURE_FLAG_EXTRA_UNUSED_27 | CREATURE_FLAG_EXTRA_UNUSED_28), // SKIP
 
     CREATURE_FLAG_EXTRA_DB_ALLOWED                      = (0xFFFFFFFF & ~(CREATURE_FLAG_EXTRA_UNUSED | CREATURE_FLAG_EXTRA_DUNGEON_BOSS)) // SKIP
@@ -358,8 +358,8 @@ typedef std::unordered_map<uint32, EquipmentInfoContainerInternal> EquipmentInfo
 // from `creature` table
 struct CreatureData
 {
-    CreatureData()  { }
-    uint32 id1{0};                                              // entry in creature_template
+    CreatureData() = default;
+    uint32 id1{0};                                             // entry in creature_template
     uint32 id2{0};                                             // entry in creature_template
     uint32 id3{0};                                             // entry in creature_template
     uint16 mapid{0};
@@ -433,7 +433,6 @@ struct CreatureAddon
     uint32 bytes1;
     uint32 bytes2;
     uint32 emote;
-    bool isLarge;
     std::vector<uint32> auras;
     VisibilityDistanceType visibilityDistanceType;
 };
@@ -485,8 +484,7 @@ struct VendorItemData
 
 struct VendorItemCount
 {
-    explicit VendorItemCount(uint32 _item, uint32 _count)
-        : itemId(_item), count(_count), lastIncrementTime(time(nullptr)) {}
+    explicit VendorItemCount(uint32 _item, uint32 _count);
 
     uint32 itemId;
     uint32 count;
@@ -519,7 +517,7 @@ typedef std::unordered_map<uint32 /*spellid*/, TrainerSpell> TrainerSpellMap;
 
 struct TrainerSpellData
 {
-    TrainerSpellData()  {}
+    TrainerSpellData()  = default;
     ~TrainerSpellData() { spellList.clear(); }
 
     TrainerSpellMap spellList;
@@ -530,11 +528,11 @@ struct TrainerSpellData
 
 struct CreatureSpellCooldown
 {
-    CreatureSpellCooldown() : category(0), end(0) { }
+    CreatureSpellCooldown()  = default;
     CreatureSpellCooldown(uint16 categoryId, uint32 endTime) : category(categoryId), end(endTime) { }
 
-    uint16 category;
-    uint32 end;
+    uint16 category{0};
+    uint32 end{0};
 };
 
 typedef std::map<uint32, CreatureSpellCooldown> CreatureSpellCooldowns;

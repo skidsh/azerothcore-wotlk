@@ -117,7 +117,7 @@ bool PointMovementGenerator<T>::DoUpdate(T* unit, uint32 /*diff*/)
 
     unit->AddUnitState(UNIT_STATE_ROAMING_MOVE);
 
-    if (i_recalculateSpeed && !unit->movespline->Finalized())
+    if (id != EVENT_CHARGE_PREPATH && i_recalculateSpeed && !unit->movespline->Finalized())
     {
         i_recalculateSpeed = false;
         Movement::MoveSplineInit init(unit);
@@ -162,9 +162,12 @@ void PointMovementGenerator<T>::DoFinalize(T* unit)
     {
         unit->ClearUnitState(UNIT_STATE_CHARGING);
 
-        if (Unit* target = ObjectAccessor::GetUnit(*unit, _chargeTargetGUID))
+        if (_chargeTargetGUID && _chargeTargetGUID == unit->GetTarget())
         {
-            unit->Attack(target, true);
+            if (Unit* target = ObjectAccessor::GetUnit(*unit, _chargeTargetGUID))
+            {
+                unit->Attack(target, true);
+            }
         }
     }
 
@@ -194,6 +197,14 @@ template <> void PointMovementGenerator<Creature>::MovementInform(Creature* unit
 {
     if (unit->AI())
         unit->AI()->MovementInform(POINT_MOTION_TYPE, id);
+
+    if (Unit* summoner = unit->GetCharmerOrOwner())
+    {
+        if (UnitAI* AI = summoner->GetAI())
+        {
+            AI->SummonMovementInform(unit, POINT_MOTION_TYPE, id);
+        }
+    }
 }
 
 template void PointMovementGenerator<Player>::DoInitialize(Player*);

@@ -24,7 +24,6 @@ go_sacred_fire_of_life
 go_shrine_of_the_birds
 go_southfury_moonstone
 go_resonite_cask
-go_tablet_of_madness
 go_tablet_of_the_seven
 go_tele_to_dalaran_crystal
 go_tele_to_violet_stand
@@ -43,6 +42,7 @@ EndContentData */
 
 #include "CellImpl.h"
 #include "GameObjectAI.h"
+#include "GameTime.h"
 #include "GridNotifiersImpl.h"
 #include "Player.h"
 #include "ScriptMgr.h"
@@ -894,7 +894,7 @@ public:
                 if (player->GetQuestStatus(QUEST_THE_FIRST_TRIAL) == QUEST_STATUS_INCOMPLETE)
                 {
                     _playerGUID = player->GetGUID();
-                    me->SetFlag(GAMEOBJECT_FLAGS, 1);
+                    me->SetGameObjectFlag((GameObjectFlags)1);
                     me->RemoveByteFlag(GAMEOBJECT_BYTES_1, 0, 1);
                     _events.ScheduleEvent(EVENT_STILLBLADE_SPAWN, 1000);
                 }
@@ -921,7 +921,7 @@ public:
                 }
                 case EVENT_RESET_BRAZIER:
                 {
-                    me->RemoveFlag(GAMEOBJECT_FLAGS, 1);
+                    me->RemoveGameObjectFlag((GameObjectFlags)1);
                     me->SetByteFlag(GAMEOBJECT_BYTES_1, 0, 1);
                     break;
                 }
@@ -939,24 +939,6 @@ public:
     GameObjectAI* GetAI(GameObject* go) const override
     {
         return new go_gilded_brazierAI(go);
-    }
-};
-
-/*######
-## go_tablet_of_madness
-######*/
-
-class go_tablet_of_madness : public GameObjectScript
-{
-public:
-    go_tablet_of_madness() : GameObjectScript("go_tablet_of_madness") { }
-
-    bool OnGossipHello(Player* player, GameObject* /*go*/) override
-    {
-        if (player->HasSkill(SKILL_ALCHEMY) && player->GetSkillValue(SKILL_ALCHEMY) >= 300 && !player->HasSpell(24266))
-            player->CastSpell(player, 24267, false);
-
-        return true;
     }
 };
 
@@ -1414,7 +1396,7 @@ class go_inconspicuous_landmark : public GameObjectScript
 public:
     go_inconspicuous_landmark() : GameObjectScript("go_inconspicuous_landmark")
     {
-        _lastUsedTime = time(nullptr);
+        _lastUsedTime = GameTime::GetGameTime().count();
     }
 
     bool OnGossipHello(Player* player, GameObject* /*go*/) override
@@ -1422,10 +1404,10 @@ public:
         if (player->HasItemCount(ITEM_CUERGOS_KEY))
             return true;
 
-        if (_lastUsedTime > time(nullptr))
+        if (_lastUsedTime > GameTime::GetGameTime().count())
             return true;
 
-        _lastUsedTime = time(nullptr) + MINUTE;
+        _lastUsedTime = GameTime::GetGameTime().count() + MINUTE;
         player->CastSpell(player, SPELL_SUMMON_PIRATES_TREASURE_AND_TRIGGER_MOB, true);
         return true;
     }
@@ -1890,11 +1872,8 @@ public:
                 {
                 case EVENT_TIME:
                 {
-                    // Get how many times it should ring
-                    time_t t = time(nullptr);
-                    tm local_tm;
                     tzset(); // set timezone for localtime_r() -> fix issues due to daylight time
-                    localtime_r(&t, &local_tm);
+                    tm local_tm = Acore::Time::TimeBreakdown();
                     uint8 _rings = (local_tm.tm_hour) % 12;
                     _rings = (_rings == 0) ? 12 : _rings; // 00:00 and 12:00
 
@@ -1977,7 +1956,6 @@ void AddSC_go_scripts()
     new go_gilded_brazier();
     //new go_shrine_of_the_birds();
     new go_southfury_moonstone();
-    new go_tablet_of_madness();
     new go_tablet_of_the_seven();
     new go_jump_a_tron();
     new go_sacred_fire_of_life();

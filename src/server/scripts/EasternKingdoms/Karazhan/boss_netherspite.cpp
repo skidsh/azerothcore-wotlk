@@ -116,7 +116,7 @@ public:
 
         float dist(float xa, float ya, float xb, float yb) // auxiliary method for distance
         {
-            return sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
+            return std::sqrt((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb));
         }
 
         void Reset() override
@@ -212,7 +212,7 @@ public:
                     }
                     // aggro target if Red Beam
                     if (j == RED_PORTAL && me->GetVictim() != target && target->GetTypeId() == TYPEID_PLAYER)
-                        me->getThreatMgr().addThreat(target, 100000.0f + DoGetThreat(me->GetVictim()));
+                        me->GetThreatMgr().addThreat(target, 100000.0f + DoGetThreat(me->GetVictim()));
                 }
         }
 

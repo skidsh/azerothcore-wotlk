@@ -69,6 +69,7 @@ public:
     void GetRespawnPosition(float& x, float& y, float& z, float* ori = nullptr, float* dist = nullptr) const;
 
     void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
+    void SetCorpseRemoveTime(uint32 delay);
     [[nodiscard]] uint32 GetCorpseDelay() const { return m_corpseDelay; }
     [[nodiscard]] bool IsRacialLeader() const { return GetCreatureTemplate()->RacialLeader; }
     [[nodiscard]] bool IsCivilian() const { return GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_CIVILIAN; }
@@ -133,12 +134,12 @@ public:
     [[nodiscard]] CreatureAI* AI() const { return (CreatureAI*)i_AI; }
 
     bool SetWalk(bool enable) override;
-    bool SetDisableGravity(bool disable, bool packetOnly = false) override;
+    bool SetDisableGravity(bool disable, bool packetOnly = false, bool updateAnimationTier = true) override;
     bool SetSwim(bool enable) override;
     bool SetCanFly(bool enable, bool packetOnly = false) override;
     bool SetWaterWalking(bool enable, bool packetOnly = false) override;
     bool SetFeatherFall(bool enable, bool packetOnly = false) override;
-    bool SetHover(bool enable, bool packetOnly = false) override;
+    bool SetHover(bool enable, bool packetOnly = false, bool updateAnimationTier = true) override;
     bool HasSpellFocus(Spell const* focusSpell = nullptr) const;
 
     struct
@@ -219,8 +220,8 @@ public:
     [[nodiscard]] Group* GetLootRecipientGroup() const;
     [[nodiscard]] bool hasLootRecipient() const { return m_lootRecipient || m_lootRecipientGroup; }
     bool isTappedBy(Player const* player) const;                          // return true if the creature is tapped by the player or a member of his party.
-    [[nodiscard]] bool CanGeneratePickPocketLoot() const { return lootPickPocketRestoreTime == 0 || lootPickPocketRestoreTime < time(nullptr); }
-    void SetPickPocketLootTime() { lootPickPocketRestoreTime = time(nullptr) + MINUTE + GetCorpseDelay() + GetRespawnTime(); }
+    [[nodiscard]] bool CanGeneratePickPocketLoot() const;
+    void SetPickPocketLootTime();
     void ResetPickPocketLootTime() { lootPickPocketRestoreTime = 0; }
 
     void SetLootRecipient (Unit* unit, bool withGroup = true);
@@ -256,9 +257,9 @@ public:
     void SetNoCallAssistance(bool val) { m_AlreadyCallAssistance = val; }
     void SetNoSearchAssistance(bool val) { m_AlreadySearchedAssistance = val; }
     bool HasSearchedAssistance() { return m_AlreadySearchedAssistance; }
-    bool CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction = true) const;
-    bool _IsTargetAcceptable(const Unit* target) const;
-    bool CanIgnoreFeignDeath() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_IGNORE_FEIGN_DEATH) != 0; }
+    bool CanAssistTo(Unit const* u, Unit const* enemy, bool checkfaction = true) const;
+    bool _IsTargetAcceptable(Unit const* target) const;
+    [[nodiscard]] bool CanIgnoreFeignDeath() const { return (GetCreatureTemplate()->flags_extra & CREATURE_FLAG_EXTRA_IGNORE_FEIGN_DEATH) != 0; }
 
     // pussywizard: updated at faction change, disable move in line of sight if actual faction is not hostile to anyone
     void UpdateMoveInLineOfSightState();
@@ -274,7 +275,7 @@ public:
 
     [[nodiscard]] time_t const& GetRespawnTime() const { return m_respawnTime; }
     [[nodiscard]] time_t GetRespawnTimeEx() const;
-    void SetRespawnTime(uint32 respawn) { m_respawnTime = respawn ? time(nullptr) + respawn : 0; }
+    void SetRespawnTime(uint32 respawn);
     void Respawn(bool force = false);
     void SaveRespawnTime() override;
 
@@ -283,6 +284,8 @@ public:
 
     [[nodiscard]] float GetWanderDistance() const { return m_wanderDistance; }
     void SetWanderDistance(float dist) { m_wanderDistance = dist; }
+
+    void DoImmediateBoundaryCheck() { m_boundaryCheckTime = 0; }
 
     uint32 m_groupLootTimer;                            // (msecs)timer used for group loot
     uint32 lootingGroupLowGUID;                         // used to find group which is looting corpse
@@ -360,7 +363,7 @@ public:
     void SetTarget(ObjectGuid guid = ObjectGuid::Empty) override;
     void FocusTarget(Spell const* focusSpell, WorldObject const* target);
     void ReleaseFocus(Spell const* focusSpell);
-    bool IsMovementPreventedByCasting() const override;
+    [[nodiscard]] bool IsMovementPreventedByCasting() const override;
 
     // Part of Evade mechanics
     [[nodiscard]] time_t GetLastDamagedTime() const;
@@ -374,13 +377,17 @@ public:
     uint32 m_moveCircleMovementTime = MOVE_CIRCLE_CHECK_INTERVAL;
     uint32 m_moveBackwardsMovementTime = MOVE_BACKWARDS_CHECK_INTERVAL;
 
-    bool HasSwimmingFlagOutOfCombat() const
+    [[nodiscard]] bool HasSwimmingFlagOutOfCombat() const
     {
         return !_isMissingSwimmingFlagOutOfCombat;
     }
     void RefreshSwimmingFlag(bool recheck = false);
 
     void SetAssistanceTimer(uint32 value) { m_assistanceTimer = value; }
+
+    void ModifyThreatPercentTemp(Unit* victim, int32 percent, Milliseconds duration);
+
+    void ResetFaction() { SetFaction(GetCreatureTemplate()->faction); }
 
 protected:
     bool CreateFromProto(ObjectGuid::LowType guidlow, uint32 Entry, uint32 vehId, const CreatureData* data = nullptr);
@@ -395,12 +402,13 @@ protected:
     ObjectGuid::LowType m_lootRecipientGroup;
 
     /// Timers
-    time_t m_corpseRemoveTime;                          // (msecs)timer for death or corpse disappearance
+    time_t m_corpseRemoveTime;                          // (secs) timer for death or corpse disappearance
     time_t m_respawnTime;                               // (secs) time of next respawn
     time_t m_respawnedTime;                             // (secs) time when creature respawned
     uint32 m_respawnDelay;                              // (secs) delay between corpse disappearance and respawning
     uint32 m_corpseDelay;                               // (secs) delay between death and corpse disappearance
     float m_wanderDistance;
+    uint32 m_boundaryCheckTime;                         // (msecs) remaining time for next evade boundary check
     uint16 m_transportCheckTimer;
     uint32 lootPickPocketRestoreTime;
 
@@ -411,8 +419,6 @@ protected:
     ObjectGuid::LowType m_spawnId;                      ///< For new or temporary creatures is 0 for saved it is lowguid
     uint8 m_equipmentId;
     int8 m_originalEquipmentId; // can be -1
-
-    uint8 m_originalAnimTier;
 
     bool m_AlreadyCallAssistance;
     bool m_AlreadySearchedAssistance;
@@ -490,6 +496,18 @@ public:
 private:
     Creature& m_owner;
     Seconds const m_respawnTimer;
+};
+
+class TemporaryThreatModifierEvent : public BasicEvent
+{
+public:
+    TemporaryThreatModifierEvent(Creature& owner, ObjectGuid threatVictimGUID, float threatValue) : BasicEvent(), m_owner(owner), m_threatVictimGUID(threatVictimGUID), m_threatValue(threatValue) { }
+    bool Execute(uint64 e_time, uint32 p_time) override;
+
+private:
+    Creature& m_owner;
+    ObjectGuid m_threatVictimGUID;
+    float m_threatValue;
 };
 
 #endif

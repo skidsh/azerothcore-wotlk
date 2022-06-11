@@ -81,6 +81,8 @@ enum CharacterDatabaseStatements : uint32
     CHAR_SEL_CHARACTER_ACTIONS_SPEC,
     CHAR_SEL_CHARACTER_MAILCOUNT_UNREAD,
     CHAR_SEL_CHARACTER_MAILCOUNT_UNREAD_SYNCH,
+    CHAR_SEL_MAIL_SERVER_CHARACTER,
+    CHAR_REP_MAIL_SERVER_CHARACTER,
     CHAR_SEL_CHARACTER_SOCIALLIST,
     CHAR_SEL_CHARACTER_HOMEBIND,
     CHAR_SEL_CHARACTER_SPELLCOOLDOWNS,
@@ -137,6 +139,7 @@ enum CharacterDatabaseStatements : uint32
 
     CHAR_INS_GUILD,
     CHAR_DEL_GUILD,
+    CHAR_UPD_GUILD_NAME,
     CHAR_INS_GUILD_MEMBER,
     CHAR_DEL_GUILD_MEMBER,
     CHAR_DEL_GUILD_MEMBERS,
@@ -512,6 +515,12 @@ enum CharacterDatabaseStatements : uint32
     CHAR_REP_CHAR_SETTINGS,
     CHAR_DEL_CHAR_SETTINGS,
 
+    CHAR_SELECT_INSTANCE_SAVED_DATA,
+    CHAR_UPDATE_INSTANCE_SAVED_DATA,
+    CHAR_INSERT_INSTANCE_SAVED_DATA,
+    CHAR_DELETE_INSTANCE_SAVED_DATA,
+    CHAR_SANITIZE_INSTANCE_SAVED_DATA,
+
     MAX_CHARACTERDATABASE_STATEMENTS
 };
 
@@ -523,7 +532,7 @@ public:
     //- Constructors for sync and async connections
     CharacterDatabaseConnection(MySQLConnectionInfo& connInfo);
     CharacterDatabaseConnection(ProducerConsumerQueue<SQLOperation*>* q, MySQLConnectionInfo& connInfo);
-    ~CharacterDatabaseConnection();
+    ~CharacterDatabaseConnection() override;
 
     //- Loads database type specific prepared statements
     void DoPrepareStatements() override;

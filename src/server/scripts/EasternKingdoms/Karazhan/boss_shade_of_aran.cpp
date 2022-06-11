@@ -162,7 +162,7 @@ public:
         void FlameWreathEffect()
         {
             std::vector<Unit*> targets;
-            ThreatContainer::StorageType const& t_list = me->getThreatMgr().getThreatList();
+            ThreatContainer::StorageType const& t_list = me->GetThreatMgr().getThreatList();
 
             if (t_list.empty())
                 return;
@@ -526,7 +526,7 @@ public:
                 DrinkInturrupted = true;
         }
 
-        void SpellHit(Unit* /*pAttacker*/, const SpellInfo* Spell) override
+        void SpellHit(Unit* /*pAttacker*/, SpellInfo const* Spell) override
         {
             //We only care about interrupt effects and only if they are durring a spell currently being cast
             if ((Spell->Effects[0].Effect != SPELL_EFFECT_INTERRUPT_CAST &&

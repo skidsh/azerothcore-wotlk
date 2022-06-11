@@ -30,6 +30,7 @@
 
 SmartAI::SmartAI(Creature* c) : CreatureAI(c)
 {
+    mIsCharmed = false;
     // copy script to local (protection for table reload)
 
     mWayPoints = nullptr;
@@ -76,6 +77,11 @@ SmartAI::SmartAI(Creature* c) : CreatureAI(c)
         conditions = sConditionMgr->GetConditionsForNotGroupedEntry(CONDITION_SOURCE_TYPE_CREATURE_TEMPLATE_VEHICLE, me->GetEntry());
 }
 
+bool SmartAI::IsAIControlled() const
+{
+    return !mIsCharmed;
+}
+
 void SmartAI::UpdateDespawn(const uint32 diff)
 {
     if (mDespawnState <= 1 || mDespawnState > 3)
@@ -107,7 +113,7 @@ WayPoint* SmartAI::GetNextWayPoint()
     {
         mLastWP = (*itr).second;
         if (mLastWP->id != mCurrentWPID)
-            LOG_ERROR("scripts.ai.sai", "SmartAI::GetNextWayPoint: Got not expected waypoint id %u, expected %u", mLastWP->id, mCurrentWPID);
+            LOG_ERROR("scripts.ai.sai", "SmartAI::GetNextWayPoint: Got not expected waypoint id {}, expected {}", mLastWP->id, mCurrentWPID);
 
         return (*itr).second;
     }
@@ -179,12 +185,6 @@ void SmartAI::GenerateWayPointArray(Movement::PointsArray* points)
 
 void SmartAI::StartPath(bool run, uint32 path, bool repeat, Unit* invoker)
 {
-    if (me->IsInCombat())// no wp movement in combat
-    {
-        LOG_ERROR("scripts.ai.sai", "SmartAI::StartPath: Creature entry %u wanted to start waypoint movement while in combat, ignoring.", me->GetEntry());
-        return;
-    }
-
     if (HasEscortState(SMART_ESCORT_ESCORTING))
         StopPath();
 
@@ -205,8 +205,8 @@ void SmartAI::StartPath(bool run, uint32 path, bool repeat, Unit* invoker)
 
         if (invoker && invoker->GetTypeId() == TYPEID_PLAYER)
         {
-            mEscortNPCFlags = me->GetUInt32Value(UNIT_NPC_FLAGS);
-            me->SetUInt32Value(UNIT_NPC_FLAGS, 0);
+            mEscortNPCFlags = me->GetNpcFlags();
+            me->ReplaceAllNpcFlags(UNIT_NPC_FLAG_NONE);
         }
 
         Movement::PointsArray pathPoints;
@@ -240,7 +240,7 @@ void SmartAI::PausePath(uint32 delay, bool forced)
 
     if (HasEscortState(SMART_ESCORT_PAUSED))
     {
-        LOG_ERROR("scripts.ai.sai", "SmartAI::StartPath: Creature entry %u wanted to pause waypoint movement while already paused, ignoring.", me->GetEntry());
+        LOG_ERROR("scripts.ai.sai", "SmartAI::StartPath: Creature entry {} wanted to pause waypoint movement while already paused, ignoring.", me->GetEntry());
         return;
     }
 
@@ -255,6 +255,12 @@ void SmartAI::PausePath(uint32 delay, bool forced)
 
         me->StopMoving();
         me->GetMotionMaster()->MoveIdle();//force stop
+
+        auto waypoint = mWayPoints->find(mCurrentWPID);
+        if (waypoint->second->o.has_value())
+        {
+            me->SetFacingTo(waypoint->second->o.has_value());
+        }
     }
     GetScript()->ProcessEventsFor(SMART_EVENT_WAYPOINT_PAUSED, nullptr, mCurrentWPID, GetScript()->GetPathId());
 }
@@ -287,7 +293,7 @@ void SmartAI::EndPath(bool fail)
 
     if (mEscortNPCFlags)
     {
-        me->SetUInt32Value(UNIT_NPC_FLAGS, mEscortNPCFlags);
+        me->ReplaceAllNpcFlags(NPCFlags(mEscortNPCFlags));
         mEscortNPCFlags = 0;
     }
 
@@ -347,7 +353,10 @@ void SmartAI::EndPath(bool fail)
     mCurrentWPID = 0;
 
     if (mCanRepeatPath)
-        StartPath(mRun, GetScript()->GetPathId(), mCanRepeatPath);
+    {
+        if (IsAIControlled())
+            StartPath(mRun, GetScript()->GetPathId(), true);
+    }
     else
         GetScript()->SetPathId(0);
 
@@ -370,6 +379,9 @@ void SmartAI::ResumePath()
 
 void SmartAI::ReturnToLastOOCPos()
 {
+    if (!IsAIControlled())
+        return;
+
     me->SetWalk(false);
     float x, y, z, o;
     me->GetHomePosition(x, y, z, o);
@@ -511,6 +523,9 @@ void SmartAI::UpdateAI(uint32 diff)
             mFollowArrivedTimer -= diff;
     }
 
+    if (!IsAIControlled())
+        return;
+
     if (!UpdateVictim())
         return;
 
@@ -618,30 +633,26 @@ void SmartAI::MovementInform(uint32 MovementType, uint32 Data)
         MovepointReached(Data);
 }
 
-void SmartAI::EnterEvadeMode()
+void SmartAI::EnterEvadeMode(EvadeReason /*why*/)
 {
-    // xinef: fixes strange jumps when charming SmartAI npc
-    if (!me->IsAlive() || me->IsInEvadeMode())
-        return;
-
     if (mEvadeDisabled)
     {
         GetScript()->ProcessEventsFor(SMART_EVENT_EVADE);
         return;
     }
 
-    if (me->GetCharmerGUID().IsPlayer() || me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_POSSESSED))
+    if (me->GetCharmerGUID().IsPlayer() || me->HasUnitFlag(UNIT_FLAG_POSSESSED))
     {
         me->AttackStop();
         return;
     }
 
-    me->RemoveEvadeAuras();
+    if (!_EnterEvadeMode())
+        return;
 
     me->AddUnitState(UNIT_STATE_EVADE);
-    _EnterEvadeMode();
 
-    GetScript()->ProcessEventsFor(SMART_EVENT_EVADE);//must be after aura clear so we can cast spells from db
+    GetScript()->ProcessEventsFor(SMART_EVENT_EVADE); //must be after aura clear so we can cast spells from db
 
     SetRun(mRun);
     if (HasEscortState(SMART_ESCORT_ESCORTING))
@@ -675,10 +686,13 @@ void SmartAI::MoveInLineOfSight(Unit* who)
 
     GetScript()->OnMoveInLineOfSight(who);
 
+    if (!IsAIControlled())
+        return;
+
     if (me->GetVictim())
         return;
 
-    if (me->HasReactState(REACT_PASSIVE) || AssistPlayerInCombat(who))
+    if (me->HasReactState(REACT_PASSIVE) || AssistPlayerInCombatAgainst(who))
         return;
 
     if (me->CanStartAttack(who))
@@ -692,15 +706,16 @@ void SmartAI::MoveInLineOfSight(Unit* who)
     }
 }
 
-bool SmartAI::CanAIAttack(const Unit* /*who*/) const
+bool SmartAI::CanAIAttack(Unit const* /*who*/) const
 {
-    if (me->GetReactState() == REACT_PASSIVE)
-        return false;
-    return true;
+    return !(me->GetReactState() == REACT_PASSIVE);
 }
 
-bool SmartAI::AssistPlayerInCombat(Unit* who)
+bool SmartAI::AssistPlayerInCombatAgainst(Unit* who)
 {
+    if (!IsAIControlled())
+        return false;
+
     // Xinef: if unit has no victim, or victim is player controlled thing
     if (!who->GetVictim() || who->GetCharmerOrOwnerOrOwnGUID().IsPlayer())
         return false;
@@ -748,7 +763,7 @@ void SmartAI::JustRespawned()
     mFollowArrivedAlive = true;
 }
 
-int SmartAI::Permissible(const Creature* creature)
+int SmartAI::Permissible(Creature const* creature)
 {
     if (creature->GetAIName() == "SmartAI")
         return PERMIT_BASE_SPECIAL;
@@ -773,7 +788,8 @@ void SmartAI::JustReachedHome()
 void SmartAI::EnterCombat(Unit* enemy)
 {
     // Xinef: Interrupt channeled spells
-    me->InterruptSpell(CURRENT_CHANNELED_SPELL, true, true);
+    if (IsAIControlled())
+        me->InterruptSpell(CURRENT_CHANNELED_SPELL, true, true);
     GetScript()->ProcessEventsFor(SMART_EVENT_AGGRO, enemy);
 }
 
@@ -802,7 +818,7 @@ void SmartAI::SummonedCreatureDies(Creature* summon, Unit* /*killer*/)
 void SmartAI::AttackStart(Unit* who)
 {
     // xinef: dont allow charmed npcs to act on their own
-    if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_POSSESSED))
+    if (me->HasUnitFlag(UNIT_FLAG_POSSESSED))
     {
         if (who && mCanAutoAttack)
             me->Attack(who, true);
@@ -826,12 +842,12 @@ void SmartAI::AttackStart(Unit* who)
     }
 }
 
-void SmartAI::SpellHit(Unit* unit, const SpellInfo* spellInfo)
+void SmartAI::SpellHit(Unit* unit, SpellInfo const* spellInfo)
 {
     GetScript()->ProcessEventsFor(SMART_EVENT_SPELLHIT, unit, 0, 0, false, spellInfo);
 }
 
-void SmartAI::SpellHitTarget(Unit* target, const SpellInfo* spellInfo)
+void SmartAI::SpellHitTarget(Unit* target, SpellInfo const* spellInfo)
 {
     GetScript()->ProcessEventsFor(SMART_EVENT_SPELLHIT_TARGET, target, 0, 0, false, spellInfo);
 }
@@ -840,6 +856,9 @@ void SmartAI::DamageTaken(Unit* doneBy, uint32& damage, DamageEffectType damaget
 {
     if (doneBy)
         GetScript()->ProcessEventsFor(SMART_EVENT_DAMAGED, doneBy, damage);
+
+    if (!IsAIControlled()) // don't allow players to use unkillable units
+        return;
 
     // Xinef: skip nodamage type (eg. instakill effect)
     if (damagetype != NODAMAGE && mInvincibilityHpLevel && (damage >= me->GetHealth() - mInvincibilityHpLevel))
@@ -871,10 +890,6 @@ void SmartAI::SummonedCreatureDespawn(Creature* unit)
     GetScript()->ProcessEventsFor(SMART_EVENT_SUMMON_DESPAWNED, unit);
 }
 
-void SmartAI::UpdateAIWhileCharmed(const uint32 /*diff*/)
-{
-}
-
 void SmartAI::CorpseRemoved(uint32& respawnDelay)
 {
     GetScript()->ProcessEventsFor(SMART_EVENT_CORPSE_REMOVED, nullptr, respawnDelay);
@@ -900,9 +915,29 @@ void SmartAI::InitializeAI()
     }
 }
 
-void SmartAI::OnCharmed(bool apply)
+void SmartAI::OnCharmed(bool /* apply */)
 {
-    GetScript()->ProcessEventsFor(SMART_EVENT_CHARMED, nullptr, 0, 0, apply);
+    bool const charmed = me->IsCharmed();
+    if (charmed) // do this before we change charmed state, as charmed state might prevent these things from processing
+    {
+        if (HasEscortState(SMART_ESCORT_ESCORTING | SMART_ESCORT_PAUSED | SMART_ESCORT_RETURNING))
+            EndPath(true);
+    }
+
+    mIsCharmed = charmed;
+
+    if (!charmed && !me->IsInEvadeMode())
+    {
+        if (mCanRepeatPath)
+            StartPath(mRun, GetScript()->GetPathId(), true);
+        else
+            me->SetWalk(!mRun);
+
+        if (Unit* charmer = me->GetCharmer())
+            AttackStart(charmer);
+    }
+
+    GetScript()->ProcessEventsFor(SMART_EVENT_CHARMED, nullptr, 0, 0, charmed);
 }
 
 void SmartAI::DoAction(int32 param)
@@ -995,6 +1030,10 @@ void SmartAI::SetCombatMove(bool on)
         return;
 
     mCanCombatMove = on;
+
+    if (!IsAIControlled())
+        return;
+
     if (!HasEscortState(SMART_ESCORT_ESCORTING))
     {
         if (on && me->GetVictim())
@@ -1024,7 +1063,6 @@ void SmartAI::SetFollow(Unit* target, float dist, float angle, uint32 credit, ui
         return;
     }
 
-    SetRun(mRun);
     mFollowGuid = target->GetGUID();
     mFollowDist = dist;
     mFollowAngle = angle;
@@ -1032,9 +1070,9 @@ void SmartAI::SetFollow(Unit* target, float dist, float angle, uint32 credit, ui
     mFollowCredit = credit;
     mFollowArrivedEntry = end;
     mFollowArrivedAlive = !aliveState; // negate - 0 is alive
-
-    me->GetMotionMaster()->MoveFollow(target, mFollowDist, mFollowAngle);
     mFollowCreditType = creditType;
+    SetRun(mRun);
+    me->GetMotionMaster()->MoveFollow(target, mFollowDist, mFollowAngle);
 }
 
 void SmartAI::StopFollow(bool complete)
@@ -1095,7 +1133,7 @@ void SmartGameObjectAI::SummonedCreatureDies(Creature* summon, Unit* /*killer*/)
     GetScript()->ProcessEventsFor(SMART_EVENT_SUMMONED_UNIT_DIES, summon);
 }
 
-int SmartGameObjectAI::Permissible(const GameObject* g)
+int SmartGameObjectAI::Permissible(GameObject const* g)
 {
     if (g->GetAIName() == "SmartGameObjectAI")
         return PERMIT_BASE_SPECIAL;
@@ -1193,7 +1231,7 @@ void SmartGameObjectAI::EventInform(uint32 eventId)
     GetScript()->ProcessEventsFor(SMART_EVENT_GO_EVENT_INFORM, nullptr, eventId);
 }
 
-void SmartGameObjectAI::SpellHit(Unit* unit, const SpellInfo* spellInfo)
+void SmartGameObjectAI::SpellHit(Unit* unit, SpellInfo const* spellInfo)
 {
     GetScript()->ProcessEventsFor(SMART_EVENT_SPELLHIT, unit, 0, 0, false, spellInfo);
 }
@@ -1208,7 +1246,7 @@ public:
         if (!player->IsAlive())
             return false;
 
-        LOG_DEBUG("sql.sql", "AreaTrigger %u is using SmartTrigger script", trigger->entry);
+        LOG_DEBUG("sql.sql", "AreaTrigger {} is using SmartTrigger script", trigger->entry);
         SmartScript script;
         script.OnInitialize(nullptr, trigger);
         script.ProcessEventsFor(SMART_EVENT_AREATRIGGER_ONTRIGGER, player, trigger->entry);

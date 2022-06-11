@@ -137,7 +137,7 @@ public:
                 pInstance->SetData(BOSS_ARGENT_CHALLENGE, IN_PROGRESS);
         }
 
-        void SpellHit(Unit*  /*caster*/, const SpellInfo* spell) override
+        void SpellHit(Unit*  /*caster*/, SpellInfo const* spell) override
         {
             if (spell->Id == 66905 && me->GetHealth() == 1) // hammer throw back damage (15k)
                 me->CastSpell(me, 68197, true);
@@ -155,10 +155,10 @@ public:
                     me->SetFaction(FACTION_FRIENDLY);
                     events.Reset();
                     Talk(TEXT_EADRIC_DEATH);
-                    me->getThreatMgr().clearReferences();
+                    me->GetThreatMgr().clearReferences();
                     me->SetRegeneratingHealth(false);
                     _EnterEvadeMode();
-                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    me->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
                     if( pInstance )
                         pInstance->SetData(BOSS_ARGENT_CHALLENGE, DONE);
                 }
@@ -302,10 +302,10 @@ public:
                     me->SetFaction(FACTION_FRIENDLY);
                     events.Reset();
                     Talk(TEXT_PALETRESS_DEATH);
-                    me->getThreatMgr().clearReferences();
+                    me->GetThreatMgr().clearReferences();
                     me->SetRegeneratingHealth(false);
                     _EnterEvadeMode();
-                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    me->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
                     if( pInstance )
                     {
                         pInstance->SetData(BOSS_ARGENT_CHALLENGE, DONE);
@@ -404,6 +404,7 @@ public:
             events.Reset();
             me->SetReactState(REACT_PASSIVE);
             me->SetObjectScale(0.01f);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
             events.ScheduleEvent(EVENT_MEMORY_SCALE, 500);
         }
 
@@ -439,7 +440,7 @@ public:
 
                     break;
                 case EVENT_MEMORY_START_ATTACK:
-                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    me->RemoveUnitFlag(UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
                     if( Unit* target = me->SelectNearestTarget(200.0f) )
                     {
                         AttackStart(target);
