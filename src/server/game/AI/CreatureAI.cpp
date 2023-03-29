@@ -25,22 +25,9 @@
 #include "MapReference.h"
 #include "Player.h"
 #include "Vehicle.h"
+#include "ScriptMgr.h"
 #include "Language.h"
-
-class PhasedRespawn : public BasicEvent
-{
-public:
-    PhasedRespawn(Creature& owner) : BasicEvent(), _owner(owner) {}
-
-    bool Execute(uint64 /*eventTime*/, uint32 /*updateTime*/) override
-    {
-        _owner.RespawnOnEvade();
-        return true;
-    }
-
-private:
-    Creature& _owner;
-};
+#include "ZoneScript.h"
 
 //Disable CreatureAI when charmed
 void CreatureAI::OnCharmed(bool /*apply*/)
@@ -53,9 +40,26 @@ void CreatureAI::OnCharmed(bool /*apply*/)
 AISpellInfoType* UnitAI::AISpellInfo;
 AISpellInfoType* GetAISpellInfo(uint32 i) { return &CreatureAI::AISpellInfo[i]; }
 
-void CreatureAI::Talk(uint8 id, WorldObject const* target /*= nullptr*/)
+/**
+ * @brief Causes the creature to talk/say the text assigned to their entry in the `creature_text` database table.
+ *
+ * @param uint8 id Text ID from `creature_text`.
+ * @param WorldObject target The target of the speech, in case it has elements such as $n, where the target's name will be referrenced.
+ * @param Milliseconds delay Delay until the creature says the text line. Creatures will talk immediately by default.
+ */
+void CreatureAI::Talk(uint8 id, WorldObject const* target /*= nullptr*/, Milliseconds delay /*= 0s*/)
 {
-    sCreatureTextMgr->SendChat(me, id, target);
+    if (delay > Seconds::zero())
+    {
+        me->m_Events.AddEventAtOffset([this, id, target]()
+        {
+            sCreatureTextMgr->SendChat(me, id, target);
+        }, delay);
+    }
+    else
+    {
+        sCreatureTextMgr->SendChat(me, id, target);
+    }
 }
 
 inline bool IsValidCombatTarget(Creature* source, Player* target)
@@ -134,14 +138,6 @@ void CreatureAI::DoZoneInCombat(Creature* creature /*= nullptr*/, float maxRange
             {
                 creature->AddThreat(player, 0.0f);
             }
-
-            /* Causes certain things to never leave the threat list (Priest Lightwell, etc):
-            for (Unit::ControlSet::const_iterator itr = player->m_Controlled.begin(); itr != player->m_Controlled.end(); ++itr)
-            {
-                creature->SetInCombatWith(*itr);
-                (*itr)->SetInCombatWith(creature);
-                creature->AddThreat(*itr, 0.0f);
-            }*/
         }
     }
 }
@@ -161,7 +157,7 @@ void CreatureAI::MoveInLineOfSight_Safe(Unit* who)
 
 void CreatureAI::MoveInLineOfSight(Unit* who)
 {
-    if (me->GetVictim())
+    if (me->IsEngaged())
         return;
 
     // pussywizard: civilian, non-combat pet or any other NOT HOSTILE TO ANYONE (!)
@@ -182,7 +178,7 @@ void CreatureAI::TriggerAlert(Unit const* who) const
     if (!who || who->GetTypeId() != TYPEID_PLAYER)
         return;
     // If this unit isn't an NPC, is already distracted, is in combat, is confused, stunned or fleeing, do nothing
-    if (me->GetTypeId() != TYPEID_UNIT || me->IsInCombat() || me->HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))
+    if (me->GetTypeId() != TYPEID_UNIT || me->IsEngaged() || me->HasUnitState(UNIT_STATE_CONFUSED | UNIT_STATE_STUNNED | UNIT_STATE_FLEEING | UNIT_STATE_DISTRACTED))
         return;
     // Only alert for hostiles!
     if (me->IsCivilian() || me->HasReactState(REACT_PASSIVE) || !me->IsHostileTo(who) || !me->_IsTargetAcceptable(who))
@@ -232,8 +228,9 @@ void CreatureAI::EnterEvadeMode(EvadeReason why)
     if (cInfo && cInfo->HasFlagsExtra(CREATURE_FLAG_EXTRA_HARD_RESET))
     {
         me->DespawnOnEvade();
-        me->m_Events.AddEvent(new PhasedRespawn(*me), me->m_Events.CalculateTime(20000));
     }
+
+    sScriptMgr->OnUnitEnterEvadeMode(me, why);
 }
 
 /*void CreatureAI::AttackedBy(Unit* attacker)
@@ -253,7 +250,7 @@ void CreatureAI::SetGazeOn(Unit* target)
 
 bool CreatureAI::UpdateVictimWithGaze()
 {
-    if (!me->IsInCombat())
+    if (!me->IsEngaged())
         return false;
 
     if (me->HasReactState(REACT_PASSIVE))
@@ -271,7 +268,7 @@ bool CreatureAI::UpdateVictimWithGaze()
 
 bool CreatureAI::UpdateVictim()
 {
-    if (!me->IsInCombat())
+    if (!me->IsEngaged())
         return false;
 
     if (!me->HasReactState(REACT_PASSIVE))
@@ -311,7 +308,10 @@ bool CreatureAI::_EnterEvadeMode(EvadeReason /*why*/)
     me->SetLootRecipient(nullptr);
     me->ResetPlayerDamageReq();
     me->SetLastDamagedTime(0);
-    me->SetCannotReachTarget(false);
+    me->SetCannotReachTarget();
+
+    if (ZoneScript* zoneScript = me->GetZoneScript() ? me->GetZoneScript() : (ZoneScript*)me->GetInstanceScript())
+        zoneScript->OnCreatureEvade(me);
 
     if (me->IsInEvadeMode())
     {

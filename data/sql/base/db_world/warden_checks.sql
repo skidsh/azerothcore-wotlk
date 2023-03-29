@@ -1,32 +1,34 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.warden_checks
+-- Dumping structure for table acore_world.warden_checks
 DROP TABLE IF EXISTS `warden_checks`;
 CREATE TABLE IF NOT EXISTS `warden_checks` (
-  `id` SMALLINT unsigned NOT NULL AUTO_INCREMENT,
-  `type` TINYINT unsigned DEFAULT NULL,
-  `data` VARCHAR(48) DEFAULT NULL,
-  `str` VARCHAR(170) DEFAULT NULL,
-  `address` INT unsigned DEFAULT NULL,
-  `length` TINYINT unsigned DEFAULT NULL,
-  `result` VARCHAR(24) DEFAULT NULL,
-  `comment` VARCHAR(50) DEFAULT NULL,
+  `id` smallint unsigned NOT NULL AUTO_INCREMENT,
+  `type` tinyint unsigned DEFAULT NULL,
+  `data` varchar(48) DEFAULT NULL,
+  `str` varchar(170) DEFAULT NULL,
+  `address` int unsigned DEFAULT NULL,
+  `length` tinyint unsigned DEFAULT NULL,
+  `result` varchar(24) DEFAULT NULL,
+  `comment` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=793 DEFAULT CHARSET=utf8mb4;
+) ENGINE=MyISAM AUTO_INCREMENT=795 DEFAULT CHARSET=utf8mb4;
 
--- Dumpar data för tabell acore_world.warden_checks: 791 rows
+-- Dumping data for table acore_world.warden_checks: 793 rows
 DELETE FROM `warden_checks`;
 /*!40000 ALTER TABLE `warden_checks` DISABLE KEYS */;
 INSERT INTO `warden_checks` (`id`, `type`, `data`, `str`, `address`, `length`, `result`, `comment`) VALUES
@@ -820,9 +822,12 @@ INSERT INTO `warden_checks` (`id`, `type`, `data`, `str`, `address`, `length`, `
 	(261, 191, 'FB13A8360C8E23B83ED7309625A7EFBAEE7DCF737068C5A6', '', 174688, 37, '', NULL),
 	(402, 243, '', '', 4609675, 5, '5E5DC20800', 'Loggin Result'),
 	(437, 243, '', '', 11287980, 8, '04000000903C9F00', 'Login State - (May be false positive)'),
-	(777, 191, 'AD5A8CBF55EC436DA968EE0B9744C93F65D9E0D6E3C1B136', '', 174688, 37, '', NULL);
+	(777, 191, 'AD5A8CBF55EC436DA968EE0B9744C93F65D9E0D6E3C1B136', '', 174688, 37, '', NULL),
+	(794, 139, NULL, 'local f=DEFAULT_CHAT_FRAME for i=1,f:GetNumMessages() do if (f:GetMessageInfo(i)):find(". It\'s in new directory not this one") then return true end end', NULL, NULL, NULL, 'Detects KickKitty'),
+	(793, 139, NULL, 'local f=DEFAULT_CHAT_FRAME for i=1,f:GetNumMessages() do if (f:GetMessageInfo(i)):find("New addon name is ") then return true end end', NULL, NULL, NULL, 'Detects KickKitty');
 /*!40000 ALTER TABLE `warden_checks` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

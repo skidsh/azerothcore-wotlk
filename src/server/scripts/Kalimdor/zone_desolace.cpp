@@ -101,7 +101,7 @@ public:
             _faction = 35;
             headNorth = true;
             me->setActive(true);
-            events.ScheduleEvent(EVENT_RESTART_ESCORT, 0);
+            events.ScheduleEvent(EVENT_RESTART_ESCORT, 0ms);
         }
 
         void JustRespawned() override
@@ -258,14 +258,14 @@ public:
                 {
                     summon->SetFaction(faction);
                     if (remove)
-                        summon->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+                        summon->SetImmuneToNPC(false);
                     else
-                        summon->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+                        summon->SetImmuneToNPC(true);
                 }
             if (remove)
-                me->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+                me->SetImmuneToNPC(false);
             else
-                me->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+                me->SetImmuneToNPC(true);
             me->SetFaction(faction);
         }
 
@@ -383,7 +383,7 @@ public:
                         break;
                     }
                 case 282:
-                    events.ScheduleEvent(EVENT_RESTART_ESCORT, 1000);
+                    events.ScheduleEvent(EVENT_RESTART_ESCORT, 1s);
                     break;
             }
         }

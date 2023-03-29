@@ -93,12 +93,13 @@ public:
             ApplyImmunities(true);
             SummonChannelers();
             me->SetReactState(REACT_PASSIVE);
-            me->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_NON_ATTACKABLE);
+            me->SetUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
+            me->SetImmuneToAll(true);
             if (instance)
                 instance->SetData(DATA_KELIDAN, NOT_STARTED);
         }
 
-        void EnterCombat(Unit*  /*who*/) override
+        void JustEngagedWith(Unit*  /*who*/) override
         {
             events.ScheduleEvent(EVENT_SPELL_VOLLEY, 1000);
             events.ScheduleEvent(EVENT_SPELL_CORRUPTION, 5000);
@@ -143,7 +144,8 @@ public:
                         return;
                 }
                 me->SetReactState(REACT_AGGRESSIVE);
-                me->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC | UNIT_FLAG_NON_ATTACKABLE);
+                me->RemoveUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
+                me->SetImmuneToAll(false);
                 if (Unit* target = me->SelectNearestPlayer(100.0f))
                     AttackStart(target);
             }
@@ -299,12 +301,13 @@ public:
 
         Creature* GetKelidan()
         {
-            if (me->GetInstanceScript())
-                return ObjectAccessor::GetCreature(*me, me->GetInstanceScript()->GetGuidData(DATA_KELIDAN));
+            if (InstanceScript* instance = me->GetInstanceScript())
+                return instance->GetCreature(DATA_KELIDAN);
+
             return nullptr;
         }
 
-        void EnterCombat(Unit*  /*who*/) override
+        void JustEngagedWith(Unit*  /*who*/) override
         {
             if (Creature* kelidan = GetKelidan())
                 kelidan->AI()->DoAction(ACTION_CHANNELER_ENGAGED);

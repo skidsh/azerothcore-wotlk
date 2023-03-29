@@ -38,7 +38,7 @@
 #include "WeatherMgr.h"
 #include "WorldStatePackets.h"
 
-// TODO: this import is not necessary for compilation and marked as unused by the IDE
+/// @todo: this import is not necessary for compilation and marked as unused by the IDE
 //  however, for some reasons removing it would cause a damn linking issue
 //  there is probably some underlying problem with imports which should properly addressed
 //  see: https://github.com/azerothcore/azerothcore-wotlk/issues/9766
@@ -164,7 +164,7 @@ void Player::Update(uint32 p_time)
         if (Unit* victim = GetVictim())
         {
             // default combat reach 10
-            // TODO add weapon, skill check
+            /// @todo add weapon, skill check
 
             if (isAttackReady(BASE_ATTACK))
             {
@@ -277,10 +277,11 @@ void Player::Update(uint32 p_time)
             // supposed to be in one
             if (HasRestFlag(REST_FLAG_IN_TAVERN))
             {
-                AreaTrigger const* atEntry =
-                    sObjectMgr->GetAreaTrigger(GetInnTriggerId());
-                if (!atEntry || !IsInAreaTriggerRadius(atEntry))
+                AreaTrigger const* atEntry = sObjectMgr->GetAreaTrigger(GetInnTriggerId());
+                if (!atEntry || !IsInAreaTriggerRadius(atEntry, 5.f))
+                {
                     RemoveRestFlag(REST_FLAG_IN_TAVERN);
+                }
             }
 
             uint32 newzone, newarea;
@@ -979,42 +980,56 @@ void Player::UpdateWeaponSkill(Unit* victim, WeaponAttackType attType, Item* ite
 
 void Player::UpdateCombatSkills(Unit* victim, WeaponAttackType attType, bool defence, Item* item /*= nullptr*/)
 {
-    uint8 plevel    = getLevel(); // if defense than victim == attacker
-    uint8 greylevel = Acore::XP::GetGrayLevel(plevel);
-    uint8 moblevel  = victim->getLevelForTarget(this);
+    uint8  playerLevel = GetLevel();
+    uint16 currentSkillValue = defence ? GetBaseDefenseSkillValue() : GetBaseWeaponSkillValue(attType);
+    uint16 currentSkillMax = 5 * playerLevel;
+    int32  skillDiff = currentSkillMax - currentSkillValue;
+
+    // Max skill reached for level.
+    // Can in some cases be less than 0: having max skill and then .level -1 as example.
+    if (skillDiff <= 0)
+    {
+        return;
+    }
+
+    uint8 greylevel = Acore::XP::GetGrayLevel(playerLevel);
+    uint8 moblevel = defence ? victim->getLevelForTarget(this) : victim->GetLevel(); // if defense than victim == attacker
     /*if (moblevel < greylevel)
         return;*/
     // Patch 3.0.8 (2009-01-20): You can no longer skill up weapons on mobs that are immune to damage.
 
-    if (moblevel > plevel + 5)
-        moblevel = plevel + 5;
+    if (moblevel > playerLevel + 5)
+    {
+        moblevel = playerLevel + 5;
+    }
 
-    uint8 lvldif = moblevel - greylevel;
+    int16 lvldif = moblevel - greylevel;
     if (lvldif < 3)
+    {
         lvldif = 3;
+    }
 
-    uint32 skilldif = 5 * plevel - (defence ? GetBaseDefenseSkillValue()
-                                            : GetBaseWeaponSkillValue(attType));
-    if (skilldif <= 0)
-        return;
-
-    float chance = float(3 * lvldif * skilldif) / plevel;
+    float chance = float(3 * lvldif * skillDiff) / playerLevel;
     if (!defence)
-        if (getClass() == CLASS_WARRIOR || getClass() == CLASS_ROGUE)
-            chance += chance * 0.02f * GetStat(STAT_INTELLECT);
+    {
+        chance += chance * 0.02f * GetStat(STAT_INTELLECT);
+    }
 
-    chance =
-        chance < 1.0f ? 1.0f : chance; // minimum chance to increase skill is 1%
+    chance = chance < 1.0f ? 1.0f : chance; // minimum chance to increase skill is 1%
+
+    LOG_DEBUG("entities.player", "Player::UpdateCombatSkills(defence:{}, playerLevel:{}, moblevel:{}) -> ({}/{}) chance to increase skill is {}%", defence, playerLevel, moblevel, currentSkillValue, currentSkillMax, chance);
 
     if (roll_chance_f(chance))
     {
         if (defence)
+        {
             UpdateDefense();
+        }
         else
+        {
             UpdateWeaponSkill(victim, attType, item);
+        }
     }
-    else
-        return;
 }
 
 void Player::UpdateSkillsForLevel()
@@ -1392,7 +1407,7 @@ void Player::UpdatePvPState()
 
 void Player::UpdateFFAPvPState(bool reset /*= true*/)
 {
-    // TODO: should we always synchronize UNIT_FIELD_BYTES_2, 1 of controller
+    /// @todo: should we always synchronize UNIT_FIELD_BYTES_2, 1 of controller
     // and controlled? no, we shouldn't, those are checked for affecting player
     // by client
     if (!pvpInfo.IsInNoPvPArea && !IsGameMaster() &&
@@ -1400,6 +1415,7 @@ void Player::UpdateFFAPvPState(bool reset /*= true*/)
     {
         if (!IsFFAPvP())
         {
+            sScriptMgr->OnFfaPvpStateUpdate(this, true);
             SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
             for (ControlSet::iterator itr = m_Controlled.begin();
                  itr != m_Controlled.end(); ++itr)
@@ -1418,8 +1434,11 @@ void Player::UpdateFFAPvPState(bool reset /*= true*/)
             !pvpInfo.EndTimer)
         {
             pvpInfo.FFAPvPEndTimer = time_t(0);
-
-            RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+            if (HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
+            {
+                RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+                sScriptMgr->OnFfaPvpStateUpdate(this, false);
+            }
             for (ControlSet::iterator itr = m_Controlled.begin();
                  itr != m_Controlled.end(); ++itr)
                 (*itr)->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1,
@@ -1742,28 +1761,33 @@ void Player::UpdateForQuestWorldObjects()
                 continue;
 
             // check if this unit requires quest specific flags
-            if (!obj->HasNpcFlag(UNIT_NPC_FLAG_SPELLCLICK))
-                continue;
-
-            SpellClickInfoMapBounds clickPair = sObjectMgr->GetSpellClickInfoMapBounds(obj->GetEntry());
-            for (SpellClickInfoContainer::const_iterator _itr = clickPair.first; _itr != clickPair.second; ++_itr)
+            if (obj->HasNpcFlag(UNIT_NPC_FLAG_SPELLCLICK))
             {
-                //! This code doesn't look right, but it was logically converted to condition system to do the exact
-                //! same thing it did before. It definitely needs to be overlooked for intended functionality.
-                ConditionList conds = sConditionMgr->GetConditionsForSpellClickEvent(obj->GetEntry(), _itr->second.spellId);
-                bool buildUpdateBlock = false;
-                for (ConditionList::const_iterator jtr = conds.begin(); jtr != conds.end() && !buildUpdateBlock; ++jtr)
-                    if ((*jtr)->ConditionType == CONDITION_QUESTREWARDED || (*jtr)->ConditionType == CONDITION_QUESTTAKEN)
-                        buildUpdateBlock = true;
-
-                if (buildUpdateBlock)
+                SpellClickInfoMapBounds clickPair = sObjectMgr->GetSpellClickInfoMapBounds(obj->GetEntry());
+                for (SpellClickInfoContainer::const_iterator _itr = clickPair.first; _itr != clickPair.second; ++_itr)
                 {
-                    obj->BuildValuesUpdateBlockForPlayer(&udata, this);
-                    break;
+                    //! This code doesn't look right, but it was logically converted to condition system to do the exact
+                    //! same thing it did before. It definitely needs to be overlooked for intended functionality.
+                    ConditionList conds = sConditionMgr->GetConditionsForSpellClickEvent(obj->GetEntry(), _itr->second.spellId);
+                    bool buildUpdateBlock = false;
+                    for (ConditionList::const_iterator jtr = conds.begin(); jtr != conds.end() && !buildUpdateBlock; ++jtr)
+                        if ((*jtr)->ConditionType == CONDITION_QUESTREWARDED || (*jtr)->ConditionType == CONDITION_QUESTTAKEN)
+                            buildUpdateBlock = true;
+
+                    if (buildUpdateBlock)
+                    {
+                        obj->BuildValuesUpdateBlockForPlayer(&udata, this);
+                        break;
+                    }
                 }
+            }
+            else if (obj->HasNpcFlag(UNIT_NPC_FLAG_VENDOR_MASK | UNIT_NPC_FLAG_TRAINER))
+            {
+                obj->BuildValuesUpdateBlockForPlayer(&udata, this);
             }
         }
     }
+
     udata.BuildPacket(&packet);
     GetSession()->SendPacket(&packet);
 }

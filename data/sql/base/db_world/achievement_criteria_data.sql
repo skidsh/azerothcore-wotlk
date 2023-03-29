@@ -1,29 +1,31 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.achievement_criteria_data
+-- Dumping structure for table acore_world.achievement_criteria_data
 DROP TABLE IF EXISTS `achievement_criteria_data`;
 CREATE TABLE IF NOT EXISTS `achievement_criteria_data` (
-  `criteria_id` MEDIUMINT NOT NULL,
-  `type` TINYINT unsigned NOT NULL DEFAULT 0,
-  `value1` MEDIUMINT unsigned NOT NULL DEFAULT 0,
-  `value2` MEDIUMINT unsigned NOT NULL DEFAULT 0,
+  `criteria_id` mediumint NOT NULL,
+  `type` tinyint unsigned NOT NULL DEFAULT '0',
+  `value1` mediumint unsigned NOT NULL DEFAULT '0',
+  `value2` mediumint unsigned NOT NULL DEFAULT '0',
   `ScriptName` char(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`criteria_id`,`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=FIXED COMMENT='Achievment system';
 
--- Dumpar data för tabell acore_world.achievement_criteria_data: 2 767 rows
+-- Dumping data for table acore_world.achievement_criteria_data: 2,789 rows
 DELETE FROM `achievement_criteria_data`;
 /*!40000 ALTER TABLE `achievement_criteria_data` DISABLE KEYS */;
 INSERT INTO `achievement_criteria_data` (`criteria_id`, `type`, `value1`, `value2`, `ScriptName`) VALUES
@@ -499,7 +501,7 @@ INSERT INTO `achievement_criteria_data` (`criteria_id`, `type`, `value1`, `value
 	(4955, 8, 6, 0, ''),
 	(4956, 8, 10, 0, ''),
 	(4957, 8, 11, 0, ''),
-	(4958, 8, 12, 0, ''),
+	(4958, 8, 8, 0, ''),
 	(4966, 0, 0, 0, ''),
 	(4967, 0, 0, 0, ''),
 	(4968, 0, 0, 0, ''),
@@ -2793,9 +2795,32 @@ INSERT INTO `achievement_criteria_data` (`criteria_id`, `type`, `value1`, `value
 	(13465, 12, 1, 0, ''),
 	(13466, 12, 0, 0, ''),
 	(13467, 12, 3, 0, ''),
-	(13468, 12, 2, 0, '');
+	(13468, 12, 2, 0, ''),
+	(6140, 25, 4, 0, ''),
+	(6141, 25, 5, 0, ''),
+	(6142, 25, 4, 0, ''),
+	(4768, 25, 4, 0, ''),
+	(4769, 25, 4, 0, ''),
+	(4770, 25, 4, 0, ''),
+	(4771, 25, 4, 0, ''),
+	(4772, 25, 4, 0, ''),
+	(4773, 25, 4, 0, ''),
+	(4774, 25, 4, 0, ''),
+	(4775, 25, 4, 0, ''),
+	(4776, 25, 4, 0, ''),
+	(4777, 25, 4, 0, ''),
+	(4778, 25, 4, 0, ''),
+	(4779, 25, 4, 0, ''),
+	(4780, 25, 4, 0, ''),
+	(4781, 25, 4, 0, ''),
+	(4782, 25, 4, 0, ''),
+	(4783, 25, 4, 0, ''),
+	(4784, 25, 4, 0, ''),
+	(4785, 25, 4, 0, ''),
+	(4786, 25, 4, 0, '');
 /*!40000 ALTER TABLE `achievement_criteria_data` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

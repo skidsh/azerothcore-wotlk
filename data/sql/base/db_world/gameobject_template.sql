@@ -1,60 +1,62 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.gameobject_template
+-- Dumping structure for table acore_world.gameobject_template
 DROP TABLE IF EXISTS `gameobject_template`;
 CREATE TABLE IF NOT EXISTS `gameobject_template` (
-  `entry` MEDIUMINT unsigned NOT NULL DEFAULT 0,
-  `type` TINYINT unsigned NOT NULL DEFAULT 0,
-  `displayId` MEDIUMINT unsigned NOT NULL DEFAULT 0,
-  `name` VARCHAR(100) NOT NULL DEFAULT '',
-  `IconName` VARCHAR(100) NOT NULL DEFAULT '',
-  `castBarCaption` VARCHAR(100) NOT NULL DEFAULT '',
-  `unk1` VARCHAR(100) NOT NULL DEFAULT '',
-  `size` float NOT NULL DEFAULT 1,
-  `Data0` INT unsigned NOT NULL DEFAULT 0,
-  `Data1` INT NOT NULL DEFAULT 0,
-  `Data2` INT unsigned NOT NULL DEFAULT 0,
-  `Data3` INT unsigned NOT NULL DEFAULT 0,
-  `Data4` INT unsigned NOT NULL DEFAULT 0,
-  `Data5` INT unsigned NOT NULL DEFAULT 0,
-  `Data6` INT NOT NULL DEFAULT 0,
-  `Data7` INT unsigned NOT NULL DEFAULT 0,
-  `Data8` INT unsigned NOT NULL DEFAULT 0,
-  `Data9` INT unsigned NOT NULL DEFAULT 0,
-  `Data10` INT unsigned NOT NULL DEFAULT 0,
-  `Data11` INT unsigned NOT NULL DEFAULT 0,
-  `Data12` INT unsigned NOT NULL DEFAULT 0,
-  `Data13` INT unsigned NOT NULL DEFAULT 0,
-  `Data14` INT unsigned NOT NULL DEFAULT 0,
-  `Data15` INT unsigned NOT NULL DEFAULT 0,
-  `Data16` INT unsigned NOT NULL DEFAULT 0,
-  `Data17` INT unsigned NOT NULL DEFAULT 0,
-  `Data18` INT unsigned NOT NULL DEFAULT 0,
-  `Data19` INT unsigned NOT NULL DEFAULT 0,
-  `Data20` INT unsigned NOT NULL DEFAULT 0,
-  `Data21` INT unsigned NOT NULL DEFAULT 0,
-  `Data22` INT unsigned NOT NULL DEFAULT 0,
-  `Data23` INT unsigned NOT NULL DEFAULT 0,
+  `entry` mediumint unsigned NOT NULL DEFAULT '0',
+  `type` tinyint unsigned NOT NULL DEFAULT '0',
+  `displayId` mediumint unsigned NOT NULL DEFAULT '0',
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `IconName` varchar(100) NOT NULL DEFAULT '',
+  `castBarCaption` varchar(100) NOT NULL DEFAULT '',
+  `unk1` varchar(100) NOT NULL DEFAULT '',
+  `size` float NOT NULL DEFAULT '1',
+  `Data0` int unsigned NOT NULL DEFAULT '0',
+  `Data1` int NOT NULL DEFAULT '0',
+  `Data2` int unsigned NOT NULL DEFAULT '0',
+  `Data3` int unsigned NOT NULL DEFAULT '0',
+  `Data4` int unsigned NOT NULL DEFAULT '0',
+  `Data5` int unsigned NOT NULL DEFAULT '0',
+  `Data6` int NOT NULL DEFAULT '0',
+  `Data7` int unsigned NOT NULL DEFAULT '0',
+  `Data8` int unsigned NOT NULL DEFAULT '0',
+  `Data9` int unsigned NOT NULL DEFAULT '0',
+  `Data10` int unsigned NOT NULL DEFAULT '0',
+  `Data11` int unsigned NOT NULL DEFAULT '0',
+  `Data12` int unsigned NOT NULL DEFAULT '0',
+  `Data13` int unsigned NOT NULL DEFAULT '0',
+  `Data14` int unsigned NOT NULL DEFAULT '0',
+  `Data15` int unsigned NOT NULL DEFAULT '0',
+  `Data16` int unsigned NOT NULL DEFAULT '0',
+  `Data17` int unsigned NOT NULL DEFAULT '0',
+  `Data18` int unsigned NOT NULL DEFAULT '0',
+  `Data19` int unsigned NOT NULL DEFAULT '0',
+  `Data20` int unsigned NOT NULL DEFAULT '0',
+  `Data21` int unsigned NOT NULL DEFAULT '0',
+  `Data22` int unsigned NOT NULL DEFAULT '0',
+  `Data23` int unsigned NOT NULL DEFAULT '0',
   `AIName` char(64) NOT NULL DEFAULT '',
-  `ScriptName` VARCHAR(64) NOT NULL DEFAULT '',
-  `VerifiedBuild` SMALLINT DEFAULT 0,
+  `ScriptName` varchar(64) NOT NULL DEFAULT '',
+  `VerifiedBuild` mediumint DEFAULT NULL,
   PRIMARY KEY (`entry`),
   KEY `idx_name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ROW_FORMAT=FIXED COMMENT='Gameobject System';
 
--- Dumpar data för tabell acore_world.gameobject_template: 21 579 rows
+-- Dumping data for table acore_world.gameobject_template: 21,579 rows
 DELETE FROM `gameobject_template`;
 /*!40000 ALTER TABLE `gameobject_template` DISABLE KEYS */;
 INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `AIName`, `ScriptName`, `VerifiedBuild`) VALUES
@@ -9904,7 +9906,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180104, 0, 1787, 'Zandalar Cage', '', '', '', 1.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180105, 10, 343, 'Circle of Binding', '', '', '', 1, 0, 0, 0, 3000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180124, 5, 6231, 'Lighthouse Beam', '', '', '', 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
-	(180125, 6, 4251, 'Liquid Fire', '', '', '', 1, 0, 60, 0, 23972, 0, 0, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(180125, 6, 4251, 'Liquid Fire', '', '', '', 1, 0, 60, 6, 23972, 0, 0, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180144, 6, 5991, 'Food Buff', '', '', '', 1, 0, 0, 0, 24379, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180145, 6, 5991, 'Food Buff', '', '', '', 1, 0, 0, 0, 24379, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180146, 6, 5931, 'Speed Buff', '', '', '', 1, 0, 0, 0, 23978, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -9958,7 +9960,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180324, 5, 6356, 'Dwarven Table Ornate 01', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180325, 7, 39, 'Chair', '', '', '', 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180326, 5, 6362, 'OrcBench01', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(180327, 1, 2570, 'Brazier of Madness', '', '', '', 2, 0, 1619, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(180327, 1, 2570, 'Brazier of Madness', '', '', '', 2, 0, 1619, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_brazier_of_madness', 12340),
 	(180328, 5, 240, 'General Candelabra 01', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180329, 5, 297, 'Jar 01', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180330, 5, 6358, 'Jar 02', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -9989,7 +9991,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180365, 2, 5, 'Renataki, of the Thousand Blades', '', '', '', 1, 0, 0, 1, 6450, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180366, 2, 318, 'Battered Tackle Box', '', '', '', 1, 43, 6971, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180367, 9, 5, 'Altar of Zanza', '', '', '', 0.46, 2785, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
-	(180368, 2, 5, 'Tablet of Madness', '', '', '', 1.38, 0, 0, 0, 6443, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_tablet_of_madness', 12340),
+	(180368, 2, 5, 'Tablet of Madness', '', '', '', 1.38, 0, 0, 0, 6443, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 12340),
 	(180369, 25, 6291, 'Muddy Churning Waters', '', '', '', 1, 3, 17321, 2, 3, 1628, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180370, 3, 381, 'Harvest Fruit', '', '', '', 0.5, 93, 17323, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180371, 3, 564, 'Harvest Fish', '', '', '', 0.5, 93, 17324, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -10094,10 +10096,10 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180514, 1, 6431, 'Glyphed Crystal Prism', '', '', '', 1.5, 0, 0, 3000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180515, 10, 6429, 'Blastenheimer 5000 Ultra Cannon', '', '', '', 1, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 24832, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 11723),
 	(180516, 10, 3011, 'Shrine of Dath\'Remar', '', '', '', 3.01, 0, 0, 0, 0, 0, 0, 0, 2936, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
-	(180517, 6, 6432, 'Putrid Mushroom', '', '', '', 1, 0, 0, 0, 24871, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
+	(180517, 6, 6432, 'Putrid Mushroom', '', '', '', 1, 0, 0, 0, 24871, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 1),
 	(180518, 2, 6425, 'Lesser Wind Stone', '', '', '', 1, 0, 0, 0, 6540, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_wind_stone', 12340),
 	(180523, 3, 6405, 'Apple Bob', '', '', '', 1, 1690, 17378, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
-	(180524, 1, 6424, 'Tonk Control Console', '', '', '', 1, 0, 1634, 300000, 180525, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(180524, 1, 6424, 'Tonk Control Console', '', '', '', 1, 0, 1634, 300000, 180525, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 12340),
 	(180526, 10, 1827, 'Gong of Bethekk', '', '', '', 1, 0, 0, 9066, 3000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_gong_of_bethekk', 12340),
 	(180529, 2, 6425, 'Lesser Wind Stone', '', '', '', 1, 0, 0, 0, 6540, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_wind_stone', 12340),
 	(180534, 2, 6426, 'Wind Stone', '', '', '', 1, 0, 0, 0, 6542, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_wind_stone', 12340),
@@ -10136,7 +10138,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180609, 7, 39, 'Doodad_GeneralChairLoEnd02', '', '', '', 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 17538),
 	(180610, 7, 39, 'Doodad_GeneralChairLoEnd04', '', '', '', 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 17538),
 	(180611, 7, 39, 'Doodad_GeneralChairLoEnd05', '', '', '', 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 17538),
-	(180619, 10, 6486, 'Ossirian Crystal', '', '', '', 3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 25186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_ossirian_crystal', 11723),
+	(180619, 10, 6486, 'Ossirian Crystal', '', '', '', 3, 0, 0, 0, 8000, 0, 1, 0, 0, 0, 0, 25186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_ossirian_crystal', 11723),
 	(180620, 5, 1287, 'Music Box Silithus', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180631, 8, 6467, 'Alchemy Lab', '', '', '', 1, 663, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180632, 8, 6467, 'Alchemy Lab', '', '', '', 1, 663, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -10148,7 +10150,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180641, 5, 363, 'Purple aura, short column', '', '', '', 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', -18019),
 	(180642, 2, 528, 'Inconspicuous Crate', '', '', '', 1, 0, 7086, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180643, 9, 6478, 'Saga of the Sin\'dorei', '', '', '', 1, 2823, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(180647, 6, 6483, 'Sand Trap', '', '', '', 1, 0, 0, 0, 25656, 1, 0, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
+	(180647, 6, 6483, 'Sand Trap', '', '', '', 1, 0, 0, 0, 25656, 1, 0, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_sand_trap', 11723),
 	(180651, 5, 6479, 'Shovel', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180652, 2, 49, 'Freshly Dug Dirt', '', '', '', 1, 0, 7091, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180653, 5, 6481, 'Treasure Marker', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
@@ -10209,7 +10211,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180713, 5, 5457, 'Light of Elune', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180714, 5, 6448, 'CrateAllianceFirstAid01', '', '', '', 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
 	(180715, 2, 6513, 'Holly Preserver', '', '', '', 0.9, 0, 7159, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11159),
-	(180717, 10, 4675, 'The Scarab Gong', '', '', '', 1, 0, 7155, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
+	(180717, 2, 4675, 'The Scarab Gong', '', '', '', 1, 0, 7155, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
 	(180718, 5, 4675, 'The Scarab Gong', '', '', '', 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(180719, 5, 6514, 'Metzen\'s Stable', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11159),
 	(180720, 1, 6515, 'Firework, Show, Type 1 Blue', '', '', '', 1, 0, 0, 3000, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -10260,7 +10262,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(180768, 5, 6540, 'Lantern', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180769, 5, 6541, 'Lights', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11403),
 	(180770, 5, 6542, 'Lights', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11403),
-	(180771, 8, 6543, 'Firework Launcher', '', '', '', 1, 1351, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 12340),
+	(180771, 8, 6543, 'Firework Launcher', '', '', '', 1, 1351, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(180772, 8, 6544, 'Cluster Launcher', '', '', '', 1, 1352, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11403),
 	(180773, 5, 6545, 'Banner', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11403),
 	(180774, 5, 6546, 'Banner', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11403),
@@ -11649,8 +11651,8 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(182579, 8, 5611, 'Campfire', '', '', '', 1, 4, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_flames', 12340),
 	(182580, 8, 6972, 'Ogre Firepit', '', '', '', 1.47, 4, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_heat', 12340),
 	(182581, 3, 6974, 'Draenei Vessel', '', '', '', 1.5, 57, 19412, 0, 1, 0, 0, 0, 0, 10028, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(182582, 6, 6974, 'Draenei Vessel', '', '', '', 1.5, 0, 0, 5, 32668, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(182583, 3, 6974, 'Draenei Vessel', '', '', '', 1.5, 57, 0, 30, 1, 0, 0, 0, 182582, 10028, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(182582, 6, 6974, 'Draenei Vessel', '', '', '', 1.5, 0, 0, 0, 32668, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(182583, 3, 6974, 'Draenei Vessel', '', '', '', 1.5, 57, 19414, 30, 1, 0, 0, 0, 182582, 10028, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(182584, 3, 6328, 'Restless Bones', '', 'Collecting', '', 1, 1690, 19413, 0, 1, 0, 0, 0, 182585, 0, 0, 0, 0, 0, 0, 19676, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(182585, 6, 1268, 'Restless Bones', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(182587, 2, 2491, 'Wanted Poster', '', '', '', 1, 0, 7706, 1, 7744, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -12634,7 +12636,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(183847, 0, 7093, 'Doodad_HF_Mag_door01', '', '', '', 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 11723),
 	(183848, 8, 7094, 'Alchemy Lab', '', '', '', 1, 663, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(183849, 8, 7094, 'Alchemy Lab', '', '', '', 1, 663, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(183850, 5, 7109, 'Consortium Transporter', '', '', '', 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(183850, 5, 7109, 'Consortium Transporter', '', '', '', 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 12340),
 	(183851, 5, 6699, 'Ethereal Teleport Visual', '', '', '', 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', -18019),
 	(183852, 1, 7095, 'Consortium Holo-deck', '', '', '', 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(183853, 5, 214, 'Arcanist Maisie the Storm-Summoner', '', '', '', 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -19539,7 +19541,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(193010, 14, 9311, 'Troll Hut Desert Small', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
 	(193011, 10, 6429, 'Cannon', '', '', '', 2.4831, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 1),
 	(193019, 0, 8103, 'The Violet Hold', '', '', '', 0.7, 0, 1687, 5000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(193020, 1, 6899, 'Lever', '', '', '', 1.5, 0, 0, 3000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'go_violet_hold_gate_lever', 12340),
+	(193020, 1, 6899, 'Lever', '', '', '', 1.5, 0, 0, 3000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 12340),
 	(193024, 10, 1967, 'Battlescar Signal Fire', '', 'Lighting', '', 1.16, 93, 13137, 20069, 10000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28503, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(193025, 10, 8380, 'Metal Stake', '', '', '', 2.3, 1691, 0, 20092, 85000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'SmartGameObjectAI', '', 12340),
 	(193027, 5, 7975, 'War Horn Base', '', '', '', 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -19635,9 +19637,9 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(193138, 5, 8399, '', '', '', '', 0.91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(193139, 5, 8397, '', '', '', '', 0.83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(193140, 5, 1988, '', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
-	(193141, 5, 1988, '', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340);
+	(193141, 5, 1988, '', '', '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
+	(193142, 5, 458, '', '', '', '', 0.85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340);
 INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`, `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`, `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`, `Data19`, `Data20`, `Data21`, `Data22`, `Data23`, `AIName`, `ScriptName`, `VerifiedBuild`) VALUES
-	(193142, 5, 458, '', '', '', '', 0.85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(193143, 5, 6037, '', '', '', '', 0.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(193144, 5, 6037, '', '', '', '', 0.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
 	(193145, 5, 7757, '', '', '', '', 1.56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 12340),
@@ -21642,6 +21644,7 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `IconNa
 	(175622, 6, 477, 'Rookery Egg Spawner', '', '', '', 1, 0, 0, 0, 15745, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', -18019);
 /*!40000 ALTER TABLE `gameobject_template` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

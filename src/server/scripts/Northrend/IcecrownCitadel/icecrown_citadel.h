@@ -32,6 +32,8 @@
 #include "SpellMgr.h"
 #include "SpellScript.h"
 
+#define DataHeader "IC"
+
 #define ICCScriptName "instance_icecrown_citadel"
 
 uint32 const WeeklyNPCs = 9;
@@ -144,6 +146,12 @@ enum DataTypes
     DATA_LK_HC_AVAILABLE            = 256,
 
     DATA_BPC_TRASH_DIED             = 300,
+};
+
+enum PersistentData
+{
+    DATA_SPIRE_FROSTWYRM = 0,
+    MAX_DATA_INDEXES
 };
 
 enum CreaturesIds

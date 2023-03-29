@@ -1,26 +1,28 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.spell_custom_attr
+-- Dumping structure for table acore_world.spell_custom_attr
 DROP TABLE IF EXISTS `spell_custom_attr`;
 CREATE TABLE IF NOT EXISTS `spell_custom_attr` (
-  `spell_id` MEDIUMINT unsigned NOT NULL DEFAULT 0 COMMENT 'spell id',
-  `attributes` INT unsigned NOT NULL DEFAULT 0 COMMENT 'SpellCustomAttributes',
+  `spell_id` mediumint unsigned NOT NULL DEFAULT '0' COMMENT 'spell id',
+  `attributes` int unsigned NOT NULL DEFAULT '0' COMMENT 'SpellCustomAttributes',
   PRIMARY KEY (`spell_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='SpellInfo custom attributes';
 
--- Dumpar data för tabell acore_world.spell_custom_attr: 263 rows
+-- Dumping data for table acore_world.spell_custom_attr: 264 rows
 DELETE FROM `spell_custom_attr`;
 /*!40000 ALTER TABLE `spell_custom_attr` DISABLE KEYS */;
 INSERT INTO `spell_custom_attr` (`spell_id`, `attributes`) VALUES
@@ -286,9 +288,11 @@ INSERT INTO `spell_custom_attr` (`spell_id`, `attributes`) VALUES
 	(22285, 2048),
 	(22286, 2048),
 	(22287, 2048),
-	(22288, 2048);
+	(22288, 2048),
+	(5255, 32768);
 /*!40000 ALTER TABLE `spell_custom_attr` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

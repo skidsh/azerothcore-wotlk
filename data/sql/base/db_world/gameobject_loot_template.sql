@@ -1,34 +1,36 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.gameobject_loot_template
+-- Dumping structure for table acore_world.gameobject_loot_template
 DROP TABLE IF EXISTS `gameobject_loot_template`;
 CREATE TABLE IF NOT EXISTS `gameobject_loot_template` (
-  `Entry` MEDIUMINT unsigned NOT NULL DEFAULT 0,
-  `Item` MEDIUMINT unsigned NOT NULL DEFAULT 0,
-  `Reference` MEDIUMINT NOT NULL DEFAULT 0,
+  `Entry` mediumint unsigned NOT NULL DEFAULT '0',
+  `Item` mediumint unsigned NOT NULL DEFAULT '0',
+  `Reference` mediumint NOT NULL DEFAULT '0',
   `Chance` float NOT NULL DEFAULT '100',
-  `QuestRequired` TINYINT NOT NULL DEFAULT 0,
-  `LootMode` SMALLINT unsigned NOT NULL DEFAULT 1,
-  `GroupId` TINYINT unsigned NOT NULL DEFAULT 0,
-  `MinCount` TINYINT unsigned NOT NULL DEFAULT 1,
-  `MaxCount` TINYINT unsigned NOT NULL DEFAULT 1,
-  `Comment` VARCHAR(255) DEFAULT NULL,
+  `QuestRequired` tinyint NOT NULL DEFAULT '0',
+  `LootMode` smallint unsigned NOT NULL DEFAULT '1',
+  `GroupId` tinyint unsigned NOT NULL DEFAULT '0',
+  `MinCount` tinyint unsigned NOT NULL DEFAULT '1',
+  `MaxCount` tinyint unsigned NOT NULL DEFAULT '1',
+  `Comment` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Entry`,`Item`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='Loot System';
 
--- Dumpar data för tabell acore_world.gameobject_loot_template: 17 991 rows
+-- Dumping data for table acore_world.gameobject_loot_template: 17,994 rows
 DELETE FROM `gameobject_loot_template`;
 /*!40000 ALTER TABLE `gameobject_loot_template` DISABLE KEYS */;
 INSERT INTO `gameobject_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, `QuestRequired`, `LootMode`, `GroupId`, `MinCount`, `MaxCount`, `Comment`) VALUES
@@ -9201,7 +9203,7 @@ INSERT INTO `gameobject_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, 
 	(4769, 7308, 0, 100, 1, 1, 0, 1, 1, 'Cantation of Manifestation - Cantation of Manifestation'),
 	(4770, 7389, 0, 100, 1, 1, 0, 1, 1, 'Venture Co. Strongbox - Venture Co. Ledger'),
 	(4964, 7669, 0, 100, 1, 1, 0, 1, 1, 'Shadowforge Cache - Shattered Necklace Ruby'),
-	(5000, 13172, 0, 100, 1, 1, 0, 1, 1, 'Premium Siabi Tobacco - Siabi\'s Premium Tobacco'),
+	(5000, 13172, 0, 0.0001, 1, 1, 0, 1, 1, 'Premium Siabi Tobacco - Siabi\'s Premium Tobacco'),
 	(5026, 7871, 0, 100, 1, 1, 0, 1, 1, 'Lucius\'s Lockbox - Token of Thievery'),
 	(5044, 7908, 0, 100, 1, 1, 0, 1, 1, 'Duskwood Chest - Klaven Mortwake\'s Journal'),
 	(5045, 3864, 0, 5, 0, 1, 1, 1, 1, 'Truesilver Deposit - Citrine'),
@@ -14594,7 +14596,7 @@ INSERT INTO `gameobject_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, 
 	(13382, 12734, 0, 100, 1, 1, 0, 1, 1, 'Enchanted Scarlet Thread - Enchanted Scarlet Thread'),
 	(13400, 12765, 0, 100, 1, 1, 0, 1, 1, 'Document Chest #1 - Secret Note #1'),
 	(13572, 12806, 0, 100, 1, 1, 0, 1, 1, 'Unforged Runic Breastplate - Unforged Rune Covered Breastplate'),
-	(13574, 12812, 0, 100, 1, 1, 0, 1, 1, 'Unfired Plate Gauntlets - Unfired Plate Gauntlets'),
+	(13574, 12812, 0, 100, 0, 1, 0, 1, 1, 'Unfired Plate Gauntlets - Unfired Plate Gauntlets'),
 	(13575, 12814, 0, 100, 1, 1, 0, 1, 1, 'Box of Incendiaries - Flame in a Bottle'),
 	(13576, 12766, 0, 100, 1, 1, 0, 1, 1, 'Document Chest #2 - Secret Note #2'),
 	(13577, 12768, 0, 100, 1, 1, 0, 1, 1, 'Document Chest #3 - Secret Note #3'),
@@ -15212,10 +15214,10 @@ INSERT INTO `gameobject_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, 
 	(17521, 6359, 0, 85, 0, 1, 1, 1, 1, 'Firefin Snapper School - Firefin Snapper'),
 	(17521, 21150, 0, 0, 0, 1, 1, 1, 1, 'Firefin Snapper School - Iron Bound Trunk'),
 	(17521, 21151, 0, 0, 0, 1, 1, 1, 3, 'Firefin Snapper School - Rumsey Rum Black Label'),
-	(17532, 1, 14001, 100, 0, 1, 0, 1, 1, 'Scarab Coffer - (ReferenceTable)'),
-	(17532, 21156, 0, 100, 1, 1, 0, 1, 1, 'Scarab Coffer - Scarab Bag'),
-	(17533, 1, 14502, 100, 0, 1, 0, 1, 1, 'Large Scarab Coffer - (ReferenceTable)'),
-	(17533, 21156, 0, 100, 1, 1, 0, 1, 1, 'Large Scarab Coffer - Scarab Bag'),
+	(17532, 21157, 14001, 100, 0, 1, 0, 1, 1, 'Scarab Coffer - (ReferenceTable)'),
+	(17532, 21156, 0, 100, 0, 1, 0, 1, 1, 'Scarab Coffer - Scarab Bag'),
+	(17533, 21159, 14502, 100, 0, 1, 0, 1, 1, 'Large Scarab Coffer - (ReferenceTable)'),
+	(17533, 21157, 14503, 34, 0, 1, 0, 1, 1, 'Large Scarab Coffer - (ReferenceTable)'),
 	(17534, 3820, 0, 0, 0, 1, 1, 1, 3, 'Floating Wreckage - Stranglekelp'),
 	(17534, 21151, 0, 0, 0, 1, 1, 1, 3, 'Floating Wreckage - Rumsey Rum Black Label'),
 	(17534, 21228, 0, 60, 0, 1, 1, 1, 1, 'Floating Wreckage - Mithril Bound Trunk'),
@@ -18023,9 +18025,13 @@ INSERT INTO `gameobject_loot_template` (`Entry`, `Item`, `Reference`, `Chance`, 
 	(27240, 46368, 0, 47, 0, 1, 1, 1, 1, NULL),
 	(27240, 46369, 0, 52, 0, 1, 1, 1, 1, NULL),
 	(11103, 11753, 0, 39, 0, 1, 0, 1, 1, 'Dark Coffer - Eye of Kajal'),
-	(16719, 20951, 0, 1, 1, 1, 0, 1, 1, NULL);
+	(16719, 20951, 0, 1, 1, 1, 0, 1, 1, NULL),
+	(17533, 21156, 14503, 100, 0, 1, 0, 1, 1, 'Large Scarab Coffer - (ReferenceTable)'),
+	(17533, 21158, 14503, 34, 0, 1, 0, 1, 1, 'Large Scarab Coffer - (ReferenceTable)'),
+	(19414, 25841, 0, 0.1, 1, 1, 0, 1, 1, 'Draenei Vessel - Draenei Vessel (Empty)');
 /*!40000 ALTER TABLE `gameobject_loot_template` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,26 +1,28 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.game_event_gameobject
+-- Dumping structure for table acore_world.game_event_gameobject
 DROP TABLE IF EXISTS `game_event_gameobject`;
 CREATE TABLE IF NOT EXISTS `game_event_gameobject` (
-  `eventEntry` TINYINT NOT NULL COMMENT 'Entry of the game event. Put negative entry to remove during event.',
-  `guid` INT unsigned NOT NULL,
+  `eventEntry` tinyint NOT NULL COMMENT 'Entry of the game event. Put negative entry to remove during event.',
+  `guid` int unsigned NOT NULL,
   PRIMARY KEY (`guid`,`eventEntry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
--- Dumpar data för tabell acore_world.game_event_gameobject: 21 608 rows
+-- Dumping data for table acore_world.game_event_gameobject: 21,709 rows
 DELETE FROM `game_event_gameobject`;
 /*!40000 ALTER TABLE `game_event_gameobject` DISABLE KEYS */;
 INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
@@ -209,6 +211,59 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(8, 9755),
 	(8, 9756),
 	(8, 9757),
+	(8, 9758),
+	(8, 9759),
+	(8, 9760),
+	(8, 9761),
+	(8, 9762),
+	(8, 9763),
+	(8, 9765),
+	(8, 9766),
+	(8, 9767),
+	(8, 9768),
+	(8, 9769),
+	(8, 9770),
+	(8, 9771),
+	(8, 9772),
+	(8, 9773),
+	(8, 9774),
+	(8, 9777),
+	(8, 9778),
+	(8, 9779),
+	(8, 9780),
+	(8, 9781),
+	(8, 9782),
+	(8, 9783),
+	(8, 9784),
+	(8, 9785),
+	(8, 9786),
+	(8, 9787),
+	(8, 9789),
+	(8, 9790),
+	(8, 9791),
+	(8, 9792),
+	(8, 9793),
+	(8, 9794),
+	(8, 9795),
+	(8, 9796),
+	(8, 9797),
+	(8, 9798),
+	(8, 9799),
+	(8, 9800),
+	(8, 9801),
+	(8, 9802),
+	(8, 9803),
+	(8, 9804),
+	(8, 9805),
+	(8, 9807),
+	(8, 9808),
+	(8, 9809),
+	(8, 9810),
+	(8, 9811),
+	(8, 9813),
+	(8, 9828),
+	(8, 9830),
+	(8, 9833),
 	(15, 11012),
 	(15, 11453),
 	(15, 11480),
@@ -418,25 +473,8 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(23, 20911),
 	(23, 20912),
 	(23, 20913),
-	(1, 21003),
-	(1, 21004),
-	(1, 21005),
-	(1, 21006),
-	(1, 21007),
-	(1, 21008),
 	(1, 21009),
-	(1, 21010),
-	(1, 21011),
-	(1, 21012),
-	(1, 21013),
-	(1, 21014),
-	(1, 21015),
 	(1, 21016),
-	(1, 21017),
-	(1, 21019),
-	(1, 21020),
-	(1, 21021),
-	(1, 21022),
 	(24, 21104),
 	(24, 21105),
 	(24, 21106),
@@ -668,6 +706,9 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(4, 28630),
 	(4, 28631),
 	(27, 28704),
+	(28, 28704),
+	(29, 28704),
+	(30, 28704),
 	(7, 28845),
 	(7, 28846),
 	(7, 28847),
@@ -9984,7 +10025,8 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(31, 47108),
 	(31, 47109),
 	(31, 47110),
-	(31, 47111),
+	(31, 47111);
+INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(31, 47112),
 	(31, 47113),
 	(31, 47114),
@@ -10023,8 +10065,7 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(31, 47147),
 	(31, 47148),
 	(31, 47149),
-	(31, 47150);
-INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
+	(31, 47150),
 	(31, 47151),
 	(31, 47152),
 	(31, 47153),
@@ -14430,6 +14471,46 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(12, 54948),
 	(2, 55005),
 	(2, 55028),
+	(2, 55735),
+	(2, 55736),
+	(2, 55737),
+	(2, 55738),
+	(2, 55739),
+	(2, 55740),
+	(2, 55741),
+	(2, 55742),
+	(2, 55743),
+	(2, 55744),
+	(2, 55745),
+	(2, 55746),
+	(2, 55747),
+	(2, 55748),
+	(2, 55749),
+	(2, 55750),
+	(2, 55751),
+	(2, 55752),
+	(2, 55753),
+	(2, 55754),
+	(2, 55755),
+	(2, 55756),
+	(2, 55757),
+	(2, 55758),
+	(2, 55759),
+	(2, 55760),
+	(2, 55761),
+	(2, 55762),
+	(2, 55763),
+	(2, 55764),
+	(2, 55765),
+	(2, 55766),
+	(2, 55767),
+	(2, 55768),
+	(2, 55769),
+	(2, 55770),
+	(2, 55771),
+	(2, 55772),
+	(2, 55773),
+	(2, 55774),
 	(2, 57262),
 	(2, 57263),
 	(2, 57266),
@@ -18077,6 +18158,28 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(24, 100021),
 	(24, 100022),
 	(24, 100023),
+	(17, 105000),
+	(17, 105001),
+	(17, 105002),
+	(17, 105003),
+	(17, 105004),
+	(17, 105005),
+	(17, 105006),
+	(17, 105007),
+	(17, 105008),
+	(17, 105009),
+	(17, 105010),
+	(17, 105011),
+	(17, 105012),
+	(17, 105013),
+	(17, 105014),
+	(17, 105015),
+	(17, 105016),
+	(17, 105017),
+	(17, 105018),
+	(17, 105019),
+	(17, 105020),
+	(17, 105021),
 	(50, 121572),
 	(5, 121576),
 	(5, 121577),
@@ -19287,7 +19390,7 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(9, 152113),
 	(9, 152114),
 	(9, 152115),
-	(15, 164445),
+	(62, 164445),
 	(1, 220100),
 	(1, 220101),
 	(1, 220102),
@@ -19923,7 +20026,8 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(26, 240705),
 	(26, 240706),
 	(26, 240707),
-	(26, 240708),
+	(26, 240708);
+INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(26, 240709),
 	(26, 240710),
 	(26, 240711),
@@ -20024,8 +20128,7 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(26, 240806),
 	(26, 240807),
 	(26, 240808),
-	(26, 240809);
-INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
+	(26, 240809),
 	(26, 240810),
 	(26, 240811),
 	(26, 240812),
@@ -21636,6 +21739,7 @@ INSERT INTO `game_event_gameobject` (`eventEntry`, `guid`) VALUES
 	(1, 242684);
 /*!40000 ALTER TABLE `game_event_gameobject` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

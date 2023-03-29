@@ -1,26 +1,28 @@
 -- --------------------------------------------------------
--- Värd:                         127.0.0.1
--- Serverversion:                8.0.28 - MySQL Community Server - GPL
--- Server-OS:                    Win64
--- HeidiSQL Version:             11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               8.0.29 - MySQL Community Server - GPL
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.0.0.6468
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumpar struktur för tabell acore_world.gossip_menu
+-- Dumping structure for table acore_world.gossip_menu
 DROP TABLE IF EXISTS `gossip_menu`;
 CREATE TABLE IF NOT EXISTS `gossip_menu` (
-  `MenuID` SMALLINT unsigned NOT NULL DEFAULT 0,
-  `TextID` MEDIUMINT unsigned NOT NULL DEFAULT 0,
+  `MenuID` smallint unsigned NOT NULL DEFAULT '0',
+  `TextID` mediumint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`MenuID`,`TextID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
--- Dumpar data för tabell acore_world.gossip_menu: 5 922 rows
+-- Dumping data for table acore_world.gossip_menu: 5,954 rows
 DELETE FROM `gossip_menu`;
 /*!40000 ALTER TABLE `gossip_menu` DISABLE KEYS */;
 INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
@@ -181,6 +183,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(750, 1299),
 	(751, 1301),
 	(752, 1302),
+	(752, 1303),
 	(780, 1332),
 	(781, 1333),
 	(782, 1334),
@@ -701,6 +704,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(3128, 3864),
 	(3129, 3865),
 	(3129, 4113),
+	(3129, 4114),
 	(3130, 3854),
 	(3131, 3866),
 	(3131, 4788),
@@ -950,6 +954,8 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(3801, 4633),
 	(3801, 4773),
 	(3802, 4634),
+	(3803, 4635),
+	(3803, 4636),
 	(3821, 4357),
 	(3841, 4693),
 	(3842, 4694),
@@ -1646,6 +1652,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(5481, 6533),
 	(5482, 6534),
 	(5483, 6535),
+	(5501, 6554),
 	(5502, 6553),
 	(5502, 6555),
 	(5503, 6556),
@@ -1733,6 +1740,11 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(5781, 6956),
 	(5782, 6957),
 	(5783, 6958),
+	(5812, 6985),
+	(5813, 6986),
+	(5814, 6987),
+	(5815, 6988),
+	(5816, 6989),
 	(5818, 6991),
 	(5819, 6992),
 	(5824, 6995),
@@ -1863,13 +1875,18 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(6442, 7707),
 	(6443, 7635),
 	(6443, 7636),
+	(6443, 7637),
 	(6445, 7638),
 	(6445, 7639),
 	(6447, 7641),
+	(6448, 7643),
 	(6448, 7669),
 	(6449, 7670),
+	(6449, 100117),
 	(6450, 7673),
+	(6450, 100118),
 	(6451, 7674),
+	(6451, 100119),
 	(6456, 3334),
 	(6459, 7599),
 	(6459, 7652),
@@ -2012,6 +2029,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(6628, 7882),
 	(6628, 7903),
 	(6644, 7899),
+	(6644, 8701),
 	(6644, 8702),
 	(6645, 7900),
 	(6646, 7902),
@@ -2073,8 +2091,11 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(6786, 8103),
 	(6791, 8108),
 	(6792, 8109),
+	(6793, 8080),
 	(6793, 8111),
+	(6794, 8078),
 	(6794, 8112),
+	(6795, 8079),
 	(6795, 8113),
 	(6796, 8114),
 	(6797, 8109),
@@ -2209,6 +2230,8 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(7103, 8357),
 	(7104, 8358),
 	(7105, 8359),
+	(7106, 8363),
+	(7107, 8364),
 	(7109, 8366),
 	(7111, 8369),
 	(7112, 8370),
@@ -2372,6 +2395,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(7344, 8755),
 	(7345, 8756),
 	(7346, 8759),
+	(7346, 8760),
 	(7348, 8767),
 	(7348, 9619),
 	(7349, 8591),
@@ -3091,6 +3115,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(8112, 10042),
 	(8113, 9922),
 	(8113, 10045),
+	(8114, 10047),
 	(8115, 9922),
 	(8115, 10045),
 	(8116, 9922),
@@ -3405,7 +3430,6 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(8439, 10544),
 	(8440, 10545),
 	(8441, 10546),
-	(8441, 10884),
 	(8443, 10549),
 	(8446, 10553),
 	(8447, 10554),
@@ -4372,6 +4396,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(9578, 12926),
 	(9580, 12929),
 	(9580, 12930),
+	(9581, 12932),
 	(9581, 12933),
 	(9582, 12934),
 	(9584, 12937),
@@ -5416,6 +5441,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(10948, 15212),
 	(10949, 15214),
 	(10950, 15215),
+	(10953, 15217),
 	(10954, 15219),
 	(10956, 15221),
 	(10968, 15246),
@@ -5554,6 +5580,16 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(12002, 50030),
 	(12024, 16850),
 	(12039, 3301),
+	(12039, 3311),
+	(12040, 3302),
+	(12041, 3303),
+	(12042, 3304),
+	(12043, 3305),
+	(12044, 3306),
+	(12045, 3307),
+	(12046, 3308),
+	(12047, 3309),
+	(12048, 3310),
 	(12050, 16882),
 	(12056, 16901),
 	(12094, 16982),
@@ -5885,8 +5921,6 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(30216, 40105),
 	(30217, 40106),
 	(30223, 4778),
-	(30229, 3865),
-	(30229, 4113),
 	(30230, 10421),
 	(30231, 13800),
 	(30232, 14067),
@@ -5948,6 +5982,7 @@ INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
 	(61030, 50019);
 /*!40000 ALTER TABLE `gossip_menu` ENABLE KEYS */;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

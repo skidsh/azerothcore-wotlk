@@ -76,6 +76,8 @@ static FactionTeamMap sFactionTeamMap;
 DBCStorage <FactionEntry> sFactionStore(FactionEntryfmt);
 DBCStorage <FactionTemplateEntry> sFactionTemplateStore(FactionTemplateEntryfmt);
 
+DBCStorage <GameObjectArtKitEntry> sGameObjectArtKitStore(GameObjectArtKitfmt);
+
 DBCStorage <GameObjectDisplayInfoEntry> sGameObjectDisplayInfoStore(GameObjectDisplayInfofmt);
 DBCStorage <GemPropertiesEntry> sGemPropertiesStore(GemPropertiesEntryfmt);
 DBCStorage <GlyphPropertiesEntry> sGlyphPropertiesStore(GlyphPropertiesfmt);
@@ -118,6 +120,9 @@ DBCStorage <MapDifficultyEntry> sMapDifficultyStore(MapDifficultyEntryfmt); // o
 MapDifficultyMap sMapDifficultyMap;
 
 DBCStorage <MovieEntry> sMovieStore(MovieEntryfmt);
+
+DBCStorage <NamesReservedEntry> sNamesReservedStore(NamesReservedfmt);
+DBCStorage <NamesProfanityEntry> sNamesProfanityStore(NamesProfanityfmt);
 
 DBCStorage <OverrideSpellDataEntry> sOverrideSpellDataStore(OverrideSpellDatafmt);
 
@@ -294,6 +299,7 @@ void LoadDBCStores(const std::string& dataPath)
     LOAD_DBC(sEmotesTextStore,                      "EmotesText.dbc",                       "emotestext_dbc");
     LOAD_DBC(sFactionStore,                         "Faction.dbc",                          "faction_dbc");
     LOAD_DBC(sFactionTemplateStore,                 "FactionTemplate.dbc",                  "factiontemplate_dbc");
+    LOAD_DBC(sGameObjectArtKitStore,                "GameObjectArtKit.dbc",                 "gameobjectartkit_dbc");
     LOAD_DBC(sGameObjectDisplayInfoStore,           "GameObjectDisplayInfo.dbc",            "gameobjectdisplayinfo_dbc");
     LOAD_DBC(sGemPropertiesStore,                   "GemProperties.dbc",                    "gemproperties_dbc");
     LOAD_DBC(sGlyphPropertiesStore,                 "GlyphProperties.dbc",                  "glyphproperties_dbc");
@@ -327,6 +333,8 @@ void LoadDBCStores(const std::string& dataPath)
     LOAD_DBC(sMapStore,                             "Map.dbc",                              "map_dbc");
     LOAD_DBC(sMapDifficultyStore,                   "MapDifficulty.dbc",                    "mapdifficulty_dbc");
     LOAD_DBC(sMovieStore,                           "Movie.dbc",                            "movie_dbc");
+    LOAD_DBC(sNamesReservedStore,                   "NamesReserved.dbc",                    "namesreserved_dbc");
+    LOAD_DBC(sNamesProfanityStore,                  "NamesProfanity.dbc",                   "namesprofanity_dbc");
     LOAD_DBC(sOverrideSpellDataStore,               "OverrideSpellData.dbc",                "overridespelldata_dbc");
     LOAD_DBC(sPowerDisplayStore,                    "PowerDisplay.dbc",                     "powerdisplay_dbc");
     LOAD_DBC(sPvPDifficultyStore,                   "PvpDifficulty.dbc",                    "pvpdifficulty_dbc");
@@ -543,11 +551,11 @@ void LoadDBCStores(const std::string& dataPath)
                 if (sInfo->Effect[j] == SPELL_EFFECT_SEND_TAXI)
                     spellPaths.insert(sInfo->EffectMiscValue[j]);
 
-        memset(sTaxiNodesMask, 0, sizeof(sTaxiNodesMask));
-        memset(sOldContinentsNodesMask, 0, sizeof(sOldContinentsNodesMask));
-        memset(sHordeTaxiNodesMask, 0, sizeof(sHordeTaxiNodesMask));
-        memset(sAllianceTaxiNodesMask, 0, sizeof(sAllianceTaxiNodesMask));
-        memset(sDeathKnightTaxiNodesMask, 0, sizeof(sDeathKnightTaxiNodesMask));
+        sTaxiNodesMask.fill(0);
+        sOldContinentsNodesMask.fill(0);
+        sHordeTaxiNodesMask.fill(0);
+        sAllianceTaxiNodesMask.fill(0);
+        sDeathKnightTaxiNodesMask.fill(0);
 
         for (uint32 i = 1; i < sTaxiNodesStore.GetNumRows(); ++i)
         {
@@ -634,7 +642,7 @@ void LoadDBCStores(const std::string& dataPath)
         exit(1);
     }
 
-    LOG_INFO("server.loading", ">> Initialized {} data stores in {} ms", DBCFileCount, GetMSTimeDiffToNow(oldMSTime));
+    LOG_INFO("server.loading", ">> Initialized {} Data Stores in {} ms", DBCFileCount, GetMSTimeDiffToNow(oldMSTime));
     LOG_INFO("server.loading", " ");
 }
 

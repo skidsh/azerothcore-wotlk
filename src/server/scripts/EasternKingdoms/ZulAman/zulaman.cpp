@@ -144,7 +144,7 @@ public:
 
         void Reset() override { }
 
-        void EnterCombat(Unit* /*who*/) override { }
+        void JustEngagedWith(Unit* /*who*/) override { }
 
         void MovementInform(uint32 type, uint32 data) override
         {
@@ -469,7 +469,7 @@ public:
 
         void Reset() override { }
 
-        void EnterCombat(Unit* /*who*/) override { }
+        void JustEngagedWith(Unit* /*who*/) override { }
 
         void JustDied(Unit* /*killer*/) override
         {
@@ -618,7 +618,7 @@ public:
             uiTargetGUID.Clear();
         }
 
-        void EnterCombat(Unit* /*who*/) override { }
+        void JustEngagedWith(Unit* /*who*/) override { }
 
         void sGossipSelect(Player* player, uint32 sender, uint32 action) override
         {
@@ -724,13 +724,13 @@ public:
                                             if (ptarget->GetPositionX() > 120)
                                             {
                                                 ptarget->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID + 0, uint32(WEAPON_SPEAR));
-                                                ptarget->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_PC);
+                                                ptarget->SetImmuneToPC(true);
                                                 ptarget->SetReactState(REACT_PASSIVE);
                                                 ptarget->AI()->SetData(0, 1);
                                             }
                                             else
                                             {
-                                                ptarget->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_PC);
+                                                ptarget->SetImmuneToPC(true);
                                                 ptarget->SetReactState(REACT_PASSIVE);
                                                 ptarget->AI()->SetData(0, 2);
                                             }
@@ -783,37 +783,9 @@ public:
     }
 };
 
-class spell_banging_the_gong : public SpellScriptLoader
-{
-public:
-    spell_banging_the_gong() : SpellScriptLoader("spell_banging_the_gong") { }
-
-    class spell_banging_the_gong_SpellScript : public SpellScript
-    {
-        PrepareSpellScript(spell_banging_the_gong_SpellScript);
-
-        void Activate(SpellEffIndex index)
-        {
-            PreventHitDefaultEffect(index);
-            GetHitGObj()->SendCustomAnim(0);
-        }
-
-        void Register() override
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_banging_the_gong_SpellScript::Activate, EFFECT_1, SPELL_EFFECT_ACTIVATE_OBJECT);
-        }
-    };
-
-    SpellScript* GetSpellScript() const override
-    {
-        return new spell_banging_the_gong_SpellScript();
-    }
-};
-
 void AddSC_zulaman()
 {
     new npc_forest_frog();
     new npc_zulaman_hostage();
     new npc_harrison_jones();
-    new spell_banging_the_gong();
 }

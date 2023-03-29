@@ -138,9 +138,9 @@ public:
                     addValue = 1;
 
                 if (wave % 6 != 0)
-                    events.RescheduleEvent(RAND(EVENT_SUMMON_KEEPER_OR_GUARDIAN, EVENT_SUMMON_ELITES), 10000);
+                    events.RescheduleEvent(RAND(EVENT_SUMMON_KEEPER_OR_GUARDIAN, EVENT_SUMMON_ELITES), 10s);
                 else
-                    events.RescheduleEvent(EVENT_SUMMON_SABOTEOUR, 3000);
+                    events.RescheduleEvent(EVENT_SUMMON_SABOTEOUR, 3s);
             }
         }
 
@@ -168,7 +168,7 @@ public:
                     spawned = true;
                     if (Creature* c = DoSummon(RAND(NPC_PORTAL_GUARDIAN, NPC_PORTAL_KEEPER), me, 2.0f, 0, TEMPSUMMON_DEAD_DESPAWN))
                         me->CastSpell(c, SPELL_PORTAL_CHANNEL, false);
-                    events.RescheduleEvent(EVENT_SUMMON_KEEPER_TRASH, 20000);
+                    events.RescheduleEvent(EVENT_SUMMON_KEEPER_TRASH, 20s);
                     break;
                 case EVENT_SUMMON_KEEPER_TRASH:
                     for (uint8 i = 0; i < 3 + addValue; ++i)
@@ -176,7 +176,7 @@ public:
                         uint32 entry = RAND(NPC_AZURE_INVADER_1, NPC_AZURE_INVADER_2, NPC_AZURE_SPELLBREAKER_1, NPC_AZURE_SPELLBREAKER_2, NPC_AZURE_MAGE_SLAYER_1, NPC_AZURE_MAGE_SLAYER_2, NPC_AZURE_BINDER_1, NPC_AZURE_BINDER_2);
                         DoSummon(entry, me, 2.0f, 20000, TEMPSUMMON_DEAD_DESPAWN);
                     }
-                    events.RepeatEvent(20000);
+                    events.Repeat(20s);
                     break;
                 case EVENT_SUMMON_ELITES:
                     spawned = true;
@@ -275,12 +275,12 @@ struct violet_hold_trashAI : public npc_escortAI
                 c->RemoveAura(SPELL_DESTROY_DOOR_SEAL, me->GetGUID());
     }
 
-    void EnterCombat(Unit* who) override
+    void JustEngagedWith(Unit* who) override
     {
         if (!who->HasUnitFlag(UNIT_FLAG_NOT_SELECTABLE))
         {
             me->InterruptNonMeleeSpells(false);
-            me->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+            me->SetImmuneToNPC(false);
         }
     }
 
@@ -372,7 +372,7 @@ struct violet_hold_trashAI : public npc_escortAI
     void CreatureStartAttackDoor()
     {
         RemoveEscortState(STATE_ESCORT_ESCORTING | STATE_ESCORT_RETURNING | STATE_ESCORT_PAUSED);
-        me->SetUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+        me->SetImmuneToNPC(true);
         me->CastSpell((Unit*)nullptr, SPELL_DESTROY_DOOR_SEAL, true);
     }
 
@@ -380,7 +380,7 @@ struct violet_hold_trashAI : public npc_escortAI
     {
         if (!HasEscortState(STATE_ESCORT_ESCORTING))
         {
-            me->RemoveUnitFlag(UNIT_FLAG_IMMUNE_TO_NPC);
+            me->SetImmuneToNPC(false);
             me->SetHomePosition(1845.577759f + rand_norm() * 5 - 2.5f, 800.681152f + rand_norm() * 5 - 2.5f, 44.104248f, M_PI);
         }
 
@@ -1173,21 +1173,6 @@ public:
     }
 };
 
-class go_violet_hold_gate_lever : public GameObjectScript
-{
-public:
-    go_violet_hold_gate_lever() : GameObjectScript("go_violet_hold_gate_lever") { }
-
-    bool OnGossipHello(Player* player, GameObject* go) override
-    {
-        if (GameObject* gate = go->GetMap()->GetGameObject(ObjectGuid::Create<HighGuid::GameObject>(193019, 61606)))
-            if (gate->getLootState() == GO_READY)
-                gate->UseDoorOrButton(0, false, player);
-
-        return false;
-    }
-};
-
 void AddSC_violet_hold()
 {
     new go_vh_activation_crystal();
@@ -1205,5 +1190,4 @@ void AddSC_violet_hold()
     new npc_azure_stalker();
 
     new spell_destroy_door_seal();
-    new go_violet_hold_gate_lever();
 }
