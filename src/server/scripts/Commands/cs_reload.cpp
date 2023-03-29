@@ -130,6 +130,7 @@ public:
             { "npc_spellclick_spells",         HandleReloadSpellClickSpellsCommand,           SEC_ADMINISTRATOR, Console::Yes },
             { "npc_trainer",                   HandleReloadNpcTrainerCommand,                 SEC_ADMINISTRATOR, Console::Yes },
             { "npc_vendor",                    HandleReloadNpcVendorCommand,                  SEC_ADMINISTRATOR, Console::Yes },
+            { "npc_text",                      HandleReloadNpcTextCommand,                    SEC_ADMINISTRATOR, Console::Yes },
             { "page_text",                     HandleReloadPageTextsCommand,                  SEC_ADMINISTRATOR, Console::Yes },
             { "pickpocketing_loot_template",   HandleReloadLootTemplatesPickpocketingCommand, SEC_ADMINISTRATOR, Console::Yes },
             { "points_of_interest",            HandleReloadPointsOfInterestCommand,           SEC_ADMINISTRATOR, Console::Yes },
@@ -1098,6 +1099,14 @@ public:
         LOG_INFO("server.loading", "Re-Loading NPC Text Locale ... ");
         sObjectMgr->LoadNpcTextLocales();
         handler->SendGlobalGMSysMessage("DB table `npc_text_locale` reloaded.");
+        return true;
+    }
+
+    static bool HandleReloadNpcTextCommand(ChatHandler* handler)
+    {
+        LOG_INFO("server.loading", "Re-Loading NPC Text ... ");
+        sObjectMgr->LoadGossipText();
+        handler->SendGlobalGMSysMessage("DB table `npc_text` reloaded.");
         return true;
     }
 
